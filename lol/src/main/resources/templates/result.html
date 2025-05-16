@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>검색 결과</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white">
+<div class="container mx-auto p-5">
+    <h1 class="text-3xl font-bold text-center mb-6">검색 결과</h1>
+
+    <!-- 프로필 섹션 -->
+    <div class="flex items-center bg-gray-800 p-5 rounded-lg shadow-lg">
+        <img th:src="'https://ddragon.leagueoflegends.com/cdn/' + ${version} + '/img/profileicon/'+${userdata.profileIconId}+'.png'"
+             class="w-24 h-24 rounded-full border-4 border-gray-700">
+
+        <div class="ml-6">
+            <h3 class="text-xl font-semibold">프로필</h3>
+            <p class="text-lg font-bold">
+                <span th:text="${gameName}"></span>#<span th:text="${tagLine}"></span>
+            </p>
+            <p>
+                <span>Lv. </span><span th:text="${userdata.summonerLevel}"></span>
+            </p>
+        </div>
+    </div>
+
+    <!-- 리그 정보 -->
+    <div class="mt-6">
+        <h2 class="text-2xl font-semibold">리그 정보</h2>
+        <div th:each="league : ${LeagueList}" class="bg-gray-800 p-5 mt-3 rounded-lg shadow">
+            <p><strong>큐 타입:</strong> <span th:text="${league.queueType}"></span></p>
+            <p><strong>리그 포인트:</strong> <span th:text="${league.leaguePoints}"></span> LP</p>
+            <p><strong>승리:</strong> <span th:text="${league.wins}"></span> | <strong>패배:</strong> <span th:text="${league.losses}"></span></p>
+            <p><strong>티어:</strong> <span th:text="${league.tier}"></span> <span th:text="${league.rank}"></span></p>
+            <img class="w-24 mt-2" th:src="@{'/images/Rank=' + ${league.tier} + '.png'}">
+        </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(LeagueList)}" class="text-center mt-6">
+        <img class="w-24 mx-auto" th:src="@{/images/Rank=Unrank.png}">
+        <p class="text-gray-400">정보가 없습니다</p>
+    </div>
+
+    <!-- 게임 상세 정보 -->
+    <h2 class="text-2xl font-semibold mt-10">게임 상세 정보</h2>
+
+    <div th:each="match, iterStat : ${matchDataList}" class="bg-gray-800 p-5 mt-5 rounded-lg shadow">
+        <h3 class="text-lg font-semibold mb-3">게임 [[${iterStat.index + 1}]]</h3>
+
+        <!-- 승리팀 -->
+        <div style="background-color: #91BBF1" class=" p-3 rounded-lg shadow-lg">
+            <h4 class="text-lg font-bold text-white text-center mb-2">승리 팀</h4>
+            <table class="w-full border-collapse border border-gray-600">
+                <thead class="bg-blue-900">
+                <tr>
+                    <th class="border border-gray-600 p-2">소환사 이름</th>
+                    <th class="border border-gray-600 p-2">챔피언</th>
+                    <th class="border border-gray-600 p-2">킬/데스/어시</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="player : ${match.info.participants}"
+                    th:if="${player.win}" class="text-center">
+                    <td class="border border-gray-600 p-2"><span th:text="${player.riotIdGameName}"></span></td>
+                    <td class="border border-gray-600 p-2">
+                        <img th:src="'https://ddragon.leagueoflegends.com/cdn/' + ${version} + '/img/champion/'+ ${player.championName}+'.png'"
+                             class="w-10 h-10 mx-auto rounded-full">
+                    </td>
+                    <td class="border border-gray-600 p-2"><span th:text="${player.kills} + ' / ' + ${player.deaths} + ' / ' + ${player.assists}"></span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 패배팀 -->
+        <div class=" p-3 mt-4 rounded-lg shadow-lg" style="
+    background-color: #F98080;
+">
+            <h4 class="text-lg font-bold text-white text-center mb-2">패배 팀</h4>
+            <table class="w-full border-collapse border border-gray-600">
+                <thead class="" style="background-color: F98080;">
+                <tr style = "background-color: #FF5C5C">
+                    <th class="border border-gray-600 p-2">소환사 이름</th>
+                    <th class="border border-gray-600 p-2">챔피언</th>
+                    <th class="border border-gray-600 p-2">킬/데스/어시</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="player : ${match.info.participants}"
+                    th:if="${!player.win}" class="text-center">
+                    <td class="border border-gray-600 p-2"><span th:text="${player.riotIdGameName}"></span></td>
+                    <td class="border border-gray-600 p-2">
+                        <img th:src="'https://ddragon.leagueoflegends.com/cdn/' + ${version} + '/img/champion/'+ ${player.championName}+'.png'"
+                             class="w-10 h-10 mx-auto rounded-full">
+                    </td>
+                    <td class="border border-gray-600 p-2"><span th:text="${player.kills} + ' / ' + ${player.deaths} + ' / ' + ${player.assists}"></span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- 다시 검색 버튼 -->
+    <div class="text-center mt-6">
+        <a href="/" class="bg-blue-600 px-6 py-3 rounded-lg text-white font-bold shadow hover:bg-blue-500">다시 검색</a>
+    </div>
+</div>
+</body>
+</html>

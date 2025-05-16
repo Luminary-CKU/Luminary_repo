@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>검색 결과</h1>
+<img th:src="'https://ddragon.leagueoflegends.com/cdn/' + ${version} + '/img/profileicon/'+${userdata.profileIconId}+'.png'" style="background-size: 10px;
+    width: 100px;">
+
+<!--프로필-->
+<h3>프로필
+    <p>게임 이름: <span th:text="${gameName}"></span></p>
+    <p>태그라인: <span th:text="${tagLine}"></span></p>
+    <p>LV: <span th:text="${summonerLevel}"></span></p>
+</h3>
+<div th:each="league : ${LeagueList}">
+    <ul>
+        <li>큐 타입: <span th:text="${league.queueType}"></span></li>
+        <li>리그 포인트: <span th:text="${league.leaguePoints}"></span> LP</li>
+        <li>승리: <span th:text="${league.wins}"></span> | 패배: <span th:text="${league.losses}"></span></li>
+        <li>티어: <span th:text="${league.tier}"></span> <span th:text="${league.rank}"></span></li>
+        <img class="tierImg" style="background-size: 10px;
+    width: 100px;" th:src="@{'/images/Rank=' + ${league.tier} + '.png'}">
+    </ul>
+</div>
+<div th:if="${#lists.isEmpty(LeagueList)}">
+    <img class="tierImg"  th:src="@{/images/Rank=Unrank.png}" style="background-size: 10px;
+    width: 100px;">
+    <p class="ratingTire">정보가 없습니다</p>
+</div>
+
+<!--<li th:each="matchId : ${matchid}">-->
+<!--    <span th:text="${matchId}"></span>-->
+<!--</li>-->
+
+<h2>게임 상세 정보</h2>
+
+
+<div th:each="match, iterStat : ${matchDataList}">
+    <h3>게임 [[${iterStat.index + 1}]]</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>소환사 이름</th>
+            <th>챔피언</th>
+            <th>킬/데스/어시</th>
+            <th>승리 여부</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="player : ${match.info.participants}">
+
+            <td><img th:src="'https://ddragon.leagueoflegends.com/cdn/' + ${version} + '/img/champion/'+ ${player.championName}+'.png'" style="background-size: 30px;
+    width: 30px; border-radius: 15px;"></td>
+            <!--            <td th:text="${player.championName}"></td>-->
+            <td th:text="${player.riotIdGameName}"></td>
+            <td th:text="${player.kills} + ' / ' + ${player.deaths} + ' / ' + ${player.assists}"></td>
+            <td th:text="${player.win} ? '승리' : '패배'"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<a href="/">다시 검색</a>
+</body>
+</html>
