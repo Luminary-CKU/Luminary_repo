@@ -6,17 +6,17 @@ import com.lol.lol.dto.MatchDto;
 import com.lol.lol.dto.AccountrDto;
 import com.lol.lol.dto.LeagueDto;
 import com.lol.lol.dto.SummonerDto;
+import com.lol.lol.dto.ChampionRecommendationResult;
 import com.lol.lol.service.SummonerService;
 import com.lol.lol.service.WeatherService;
+import com.lol.lol.service.ContentRecommendationService;
+import com.lol.lol.service.ContentRecommendationService.PersonalizedContentResponse; // ✅ 올바른 클래스 import
+import com.lol.lol.service.ChampionRecommendationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -31,6 +31,8 @@ public class SearchController {
     private final SummonerService summonerService;
     private final ObjectMapper objectMapper;
     private final WeatherService weatherService;
+    private final ContentRecommendationService contentRecommendationService;
+    private final ChampionRecommendationService championRecommendationService;
 
     @GetMapping("/")
     public String intro() {
@@ -38,14 +40,14 @@ public class SearchController {
     }
 
     /**
-     * 개인화 페이지 - 모든 예외 처리 포함
+     * 개인화 페이지 - 콘텐츠 추천 + 미니게임 + 챔피언 추천 포함
      */
     @GetMapping("/personal")
     public String personalPage(@RequestParam String gameName,
                                @RequestParam String tagLine,
                                Model model) {
         try {
-            // 입력값 검증 예외 처리
+            // 입력값 검증
             if (gameName == null || gameName.trim().isEmpty()) {
                 model.addAttribute("error", "게임 이름을 입력해주세요.");
                 return "intro";
@@ -62,42 +64,36 @@ public class SearchController {
             String latestVersion = summonerService.getLatestVersion();
             model.addAttribute("version", latestVersion);
 
-            // URL 디코딩 예외 처리
-            String decodedGameName;
-            String decodedTagLine;
+            // 사용자 데이터 조회
             try {
                 String result = summonerService.getAccountUrl(gameName, tagLine);
-                decodedGameName = URLDecoder.decode(gameName, StandardCharsets.UTF_8.toString());
-                decodedTagLine = URLDecoder.decode(tagLine, StandardCharsets.UTF_8.toString());
+                String decodedGameName = URLDecoder.decode(gameName, StandardCharsets.UTF_8);
+                String decodedTagLine = URLDecoder.decode(tagLine, StandardCharsets.UTF_8);
 
                 model.addAttribute("gameName", decodedGameName);
                 model.addAttribute("tagLine", decodedTagLine);
 
-                // JSON 파싱 예외 처리
                 AccountrDto accountrDto = objectMapper.readValue(result, AccountrDto.class);
 
-                // 데이터 접근 예외 처리
                 if (accountrDto.getPuuid() == null || accountrDto.getPuuid().isEmpty()) {
                     throw new RuntimeException("사용자 정보에서 PUUID를 찾을 수 없습니다.");
                 }
 
                 String puuid = accountrDto.getPuuid();
-
                 String summonerResult = summonerService.getSummoner(puuid);
                 SummonerDto summonerDto = objectMapper.readValue(summonerResult, SummonerDto.class);
 
-                // 필수 데이터 검증
                 if (summonerDto.getId() == null) {
                     throw new RuntimeException("소환사 ID를 찾을 수 없습니다.");
                 }
 
                 model.addAttribute("userdata", summonerDto);
 
-                // 리그 정보 조회 (예외 처리는 서비스에서 처리됨)
+                // 리그 정보 조회
                 List<LeagueDto> leagueDtoList = summonerService.getLeaguePoint(summonerDto.getId());
                 model.addAttribute("LeagueList", leagueDtoList);
 
-                // 매치 히스토리 조회 및 상세 정보 처리
+                // 매치 히스토리 조회
                 List<String> matchIds = summonerService.getMatchHistory(puuid);
                 List<MatchDto> matchDataList = new ArrayList<>();
 
@@ -106,20 +102,40 @@ public class SearchController {
                         MatchDto matchData = summonerService.getMatchDetails(matchId);
                         if (matchData != null) {
                             matchDataList.add(matchData);
-                        } else {
-                            System.out.println("매치 데이터가 null입니다. ID: " + matchId);
                         }
                     } catch (Exception e) {
                         System.err.println("매치 상세 정보 처리 중 오류 (ID: " + matchId + "): " + e.getMessage());
-                        // 해당 매치는 건너뛰고 계속 진행
                     }
                 }
                 model.addAttribute("matchDataList", matchDataList);
 
-                // 개인화 분석 수행 (데이터 접근 예외 처리 포함)
+                // 개인화 분석 수행
                 performPersonalizedAnalysis(summonerDto, leagueDtoList, matchDataList, decodedGameName, model);
 
-                // 날씨 정보 가져오기 (WeatherService에서 예외 처리됨)
+                // ✨ 챔피언 추천 시스템 추가 ✨
+                try {
+                    ChampionRecommendationResult championRecommendations =
+                            championRecommendationService.generateChampionRecommendations(
+                                    summonerDto, leagueDtoList, matchDataList, decodedGameName);
+
+                    model.addAttribute("championRecommendations", championRecommendations);
+                    System.out.println("챔피언 추천 생성 완료: " +
+                            championRecommendations.getRecommendationsByRole().size() + " 라인");
+
+                } catch (Exception e) {
+                    System.err.println("챔피언 추천 생성 중 오류: " + e.getMessage());
+                    e.printStackTrace();
+                    // 추천 실패 시에도 페이지는 정상 작동하도록 null 설정
+                    model.addAttribute("championRecommendations", null);
+                }
+
+                // ✅ 티어별 개인화 콘텐츠 추천 (수정된 코드)
+                PersonalizedContentResponse contentRecommendation = contentRecommendationService
+                        .generatePersonalizedContent(summonerDto, leagueDtoList, matchDataList, decodedGameName);
+
+                model.addAttribute("contentRecommendation", contentRecommendation);
+
+                // 날씨 정보 가져오기
                 try {
                     String weatherComment = weatherService.generateSimpleWeatherComment();
                     double currentTemp = weatherService.getSeoulTemperature();
@@ -130,7 +146,6 @@ public class SearchController {
                     model.addAttribute("weatherCondition", weatherCondition);
                 } catch (Exception e) {
                     System.err.println("날씨 정보 처리 중 오류: " + e.getMessage());
-                    // 날씨 정보 실패 시 기본값 설정
                     model.addAttribute("weatherComment", "오늘도 게임하기 좋은 날이에요! 🎮");
                     model.addAttribute("currentTemp", 20);
                     model.addAttribute("weatherCondition", "맑음");
@@ -138,10 +153,6 @@ public class SearchController {
 
                 return "personal";
 
-            } catch (UnsupportedEncodingException e) {
-                System.err.println("URL 디코딩 오류: " + e.getMessage());
-                model.addAttribute("error", "잘못된 사용자 이름 형식입니다.");
-                return "intro";
             } catch (JsonProcessingException e) {
                 System.err.println("JSON 파싱 오류: " + e.getMessage());
                 model.addAttribute("error", "사용자 데이터 처리 중 오류가 발생했습니다.");
@@ -161,14 +172,14 @@ public class SearchController {
     }
 
     /**
-     * 검색 결과 페이지 - 모든 예외 처리 포함
+     * 검색 결과 페이지
      */
     @PostMapping("/result")
     public String searchName(@RequestParam String gameName,
                              @RequestParam String tagLine,
                              Model model) {
         try {
-            // 입력값 검증 예외 처리
+            // 입력값 검증
             if (gameName == null || gameName.trim().isEmpty()) {
                 model.addAttribute("error", "게임 이름을 입력해주세요.");
                 return "intro";
@@ -186,21 +197,18 @@ public class SearchController {
             String latestVersion = summonerService.getLatestVersion();
             model.addAttribute("version", latestVersion);
 
-            // URL 디코딩 및 API 호출 예외 처리
             try {
                 String result = summonerService.getAccountUrl(gameName, tagLine);
-                String decodedGameName = URLDecoder.decode(gameName, StandardCharsets.UTF_8.toString());
-                String decodedTagLine = URLDecoder.decode(tagLine, StandardCharsets.UTF_8.toString());
+                String decodedGameName = URLDecoder.decode(gameName, StandardCharsets.UTF_8);
+                String decodedTagLine = URLDecoder.decode(tagLine, StandardCharsets.UTF_8);
 
                 model.addAttribute("gameName", decodedGameName);
                 model.addAttribute("tagLine", decodedTagLine);
                 model.addAttribute("result", result);
 
-                // JSON 파싱 예외 처리
                 AccountrDto accountrDto = objectMapper.readValue(result, AccountrDto.class);
                 model.addAttribute("apiResult", accountrDto);
 
-                // 데이터 접근 예외 처리
                 if (accountrDto.getPuuid() == null || accountrDto.getPuuid().isEmpty()) {
                     throw new RuntimeException("사용자 정보에서 PUUID를 찾을 수 없습니다.");
                 }
@@ -227,7 +235,6 @@ public class SearchController {
                 List<String> matchIds = summonerService.getMatchHistory(puuid);
                 List<MatchDto> matchDataList = new ArrayList<>();
 
-                // 매치 상세 정보 조회 시 개별 예외 처리
                 for (String matchId : matchIds) {
                     try {
                         MatchDto matchData = summonerService.getMatchDetails(matchId);
@@ -236,17 +243,12 @@ public class SearchController {
                         }
                     } catch (Exception e) {
                         System.err.println("매치 상세 정보 처리 중 오류 (ID: " + matchId + "): " + e.getMessage());
-                        // 해당 매치는 건너뛰고 계속 진행
                     }
                 }
                 model.addAttribute("matchDataList", matchDataList);
 
                 return "result";
 
-            } catch (UnsupportedEncodingException e) {
-                System.err.println("URL 디코딩 오류: " + e.getMessage());
-                model.addAttribute("error", "잘못된 사용자 이름 형식입니다.");
-                return "intro";
             } catch (JsonProcessingException e) {
                 System.err.println("JSON 파싱 오류: " + e.getMessage());
                 model.addAttribute("error", "사용자 데이터 처리 중 오류가 발생했습니다.");
@@ -266,12 +268,12 @@ public class SearchController {
     }
 
     /**
-     * 개인화 분석 수행 - 데이터 접근 예외 처리 포함
+     * 개인화 분석 수행
      */
     private void performPersonalizedAnalysis(SummonerDto summoner, List<LeagueDto> leagues,
                                              List<MatchDto> matches, String playerName, Model model) {
         try {
-            // 1. 플레이 시간 분석 - null 체크
+            // 1. 플레이 시간 분석
             if (summoner != null && summoner.getSummonerLevel() != null) {
                 long estimatedHours = calculateEstimatedPlayTime(summoner.getSummonerLevel());
                 String playTimeComment = generatePlayTimeComment(estimatedHours);
@@ -282,12 +284,11 @@ public class SearchController {
                 model.addAttribute("estimatedHours", 0);
             }
 
-            // 2. 랭크 & 승률 분석 - null 체크 및 빈 리스트 처리
+            // 2. 랭크 & 승률 분석
             if (leagues != null && !leagues.isEmpty()) {
                 try {
                     LeagueDto mainRank = leagues.get(0);
 
-                    // null 체크
                     if (mainRank.getWins() != null && mainRank.getLosses() != null &&
                             (mainRank.getWins() + mainRank.getLosses()) > 0) {
 
@@ -305,7 +306,6 @@ public class SearchController {
                         model.addAttribute("wins", mainRank.getWins() != null ? mainRank.getWins() : 0);
                         model.addAttribute("losses", mainRank.getLosses() != null ? mainRank.getLosses() : 0);
                     } else {
-                        // 게임 수가 0인 경우
                         setUnrankedAttributes(model);
                     }
                 } catch (Exception e) {
@@ -313,11 +313,10 @@ public class SearchController {
                     setUnrankedAttributes(model);
                 }
             } else {
-                // 리그 정보가 없는 경우 (언랭)
                 setUnrankedAttributes(model);
             }
 
-            // 3. 최근 경기 분석 - null 체크 및 빈 리스트 처리
+            // 3. 최근 경기 분석
             if (matches != null && !matches.isEmpty()) {
                 try {
                     analyzeRecentMatches(matches, playerName, model);
@@ -332,7 +331,6 @@ public class SearchController {
         } catch (Exception e) {
             System.err.println("개인화 분석 전체 오류: " + e.getMessage());
             e.printStackTrace();
-            // 기본값들 설정
             model.addAttribute("playTimeComment", "분석 중 오류가 발생했습니다.");
             model.addAttribute("estimatedHours", 0);
             setUnrankedAttributes(model);
@@ -368,12 +366,12 @@ public class SearchController {
     }
 
     /**
-     * 플레이 시간 계산 - 오버플로우 방지
+     * 플레이 시간 계산
      */
     private long calculateEstimatedPlayTime(long level) {
         try {
-            if (level < 0) level = 1; // 음수 방지
-            if (level > 1000) level = 1000; // 너무 큰 값 방지
+            if (level < 0) level = 1;
+            if (level > 1000) level = 1000;
 
             long estimatedGames;
 
@@ -391,7 +389,6 @@ public class SearchController {
 
             long estimatedHours = (estimatedGames * 30) / 60;
 
-            // 음수나 너무 큰 값 방지
             if (estimatedHours < 0) estimatedHours = 0;
             if (estimatedHours > 50000) estimatedHours = 50000;
 
@@ -400,12 +397,12 @@ public class SearchController {
 
         } catch (Exception e) {
             System.err.println("플레이 시간 계산 오류: " + e.getMessage());
-            return 100; // 기본값
+            return 100;
         }
     }
 
     /**
-     * 최근 경기 분석 - 데이터 접근 예외 처리 강화
+     * 최근 경기 분석
      */
     private void analyzeRecentMatches(List<MatchDto> matchDataList, String playerName, Model model) {
         try {
@@ -413,7 +410,7 @@ public class SearchController {
             Map<String, Integer> championCount = new HashMap<>();
 
             int matchCount = Math.min(7, matchDataList.size());
-            int validMatches = 0; // 실제로 분석된 매치 수
+            int validMatches = 0;
 
             for (int i = 0; i < matchCount; i++) {
                 try {
@@ -442,15 +439,12 @@ public class SearchController {
                     }
                 } catch (Exception e) {
                     System.err.println("개별 매치 분석 중 오류 (인덱스 " + i + "): " + e.getMessage());
-                    // 해당 매치는 건너뛰고 계속 진행
                 }
             }
 
-            // 분석된 매치가 있는 경우에만 결과 설정
             if (validMatches > 0) {
                 double kda = totalDeaths > 0 ? (double)(totalKills + totalAssists) / totalDeaths : totalKills + totalAssists;
 
-                // KDA 값 검증
                 if (Double.isNaN(kda) || Double.isInfinite(kda) || kda < 0) {
                     kda = 0.0;
                 }
@@ -468,7 +462,6 @@ public class SearchController {
                 model.addAttribute("recentTotal", validMatches);
                 model.addAttribute("recentPerformanceComment", generateRecentPerformanceComment(wins, validMatches));
             } else {
-                // 분석 가능한 매치가 없는 경우
                 setDefaultMatchAnalysis(model);
             }
 
@@ -478,7 +471,7 @@ public class SearchController {
         }
     }
 
-    // 멘트 생성 메서드들 - null 체크 추가
+    // 멘트 생성 메서드들
     private String generatePlayTimeComment(long hours) {
         try {
             if (hours > 2000) {
@@ -562,16 +555,14 @@ public class SearchController {
             }
 
             Map<String, String> championComments = new HashMap<>();
-            // 리그 오브 레전드 전체 챔피언 개성 멘트 (정확한 영문명 170명 완전판)
-// Op.gg 기준 정확한 챔피언명으로 작성
-
+            // 리그 오브 레전드 챔피언 개성 멘트 (샘플)
             championComments.put("Aatrox", "다르킨의 힘을... 혹시 평소에도 파워풀하신가요? ⚔️");
             championComments.put("Ahri", "매혹적인 플레이를 하시는군요! 현실에서도 인기가 많으실 것 같아요 ✨");
             championComments.put("Akali", "닌자 플레이... 혹시 평소에도 조용하신 편인가요? 🥷");
             championComments.put("Akshan", "파멸자... 정의를 위해서라면 뭐든 하시는 타입이군요 ⚔️✨");
             championComments.put("Alistar", "황소의 힘! 현실에서도 든든한 분이시겠네요 🐂");
             championComments.put("Ambessa", "녹서스의 전쟁영주... 카리스마와 야망이 넘치시는군요 ⚔️👑");
-            championComments.put("Amumu", "외로운 미라... 친구가 필요하시겠어요 🤗");
+            championComments.put("Ammu", "외로운 미라... 친구가 필요하시겠어요 🤗");
             championComments.put("Anivia", "얼음불사조... 차가운 지혜를 가지고 계시네요 🧊🦅");
             championComments.put("Annie", "불을 다루는 소녀... 화끈한 성격이시겠네요! 🔥");
             championComments.put("Aphelios", "달의 무기고... 말보다는 행동으로 표현하시는 타입이군요 🌙🔫");
@@ -579,7 +570,6 @@ public class SearchController {
             championComments.put("Aurelion Sol", "별을 다루시는군요! 우주적 스케일의 사고를 하시나요? ⭐");
             championComments.put("Aurora", "바스타야의 영혼... 신비로운 마법과 자연을 사랑하시는군요 🌸✨");
             championComments.put("Azir", "사막의 황제... 리더십과 카리스마가 뛰어나시겠어요 👑🦅");
-            championComments.put("Bard", "우주의 수호자시군요! 신비로운 매력이 있으시겠어요 🎵");
             championComments.put("Bel'Veth", "공허의 여제... 압도적인 존재감을 가지고 계시네요 👑👹");
             championComments.put("Blitzcrank", "로봇이 좋으신가요? 현실에서도 후킹 실력이 좋으실 것 같은데요? 🤖");
             championComments.put("Brand", "불의 정령... 열정적인 삶을 사시는군요! 🔥");
@@ -687,7 +677,7 @@ public class SearchController {
             championComments.put("Shen", "균형의 눈... 조화로운 삶을 추구하시는군요 ⚖️🥷");
             championComments.put("Shyvana", "하프 드래곤... 이중적인 매력을 가지고 계시네요 🐉");
             championComments.put("Singed", "미친 화학자... 독특한 아이디어의 소유자시군요 ☠️");
-            championComments.put("Sion", "언데드 거인... 불굴의 의지를 가지고 계시네요 💀");
+            championComments.put("Sion", "언데드 거신... 불굴의 의지를 가지고 계시네요 💀");
             championComments.put("Sivir", "사막의 장미... 실용적이고 현실적이시겠어요 ⚔️💰");
             championComments.put("Skarner", "수정 전갈... 고향을 그리워하는 마음이 있으시겠어요 🦂💎");
             championComments.put("Smolder", "귀여운 어린 용... 앞으로 더 크게 성장하실 거예요! 🐲🔥");
@@ -697,7 +687,7 @@ public class SearchController {
             championComments.put("Sylas", "마법 도둑... 혁명가의 기질이 있으시군요 ⛓️");
             championComments.put("Syndra", "어둠 구체의 여왕... 강력한 자존감을 가지고 계시네요 ⚫");
             championComments.put("Tahm Kench", "강의 악마... 탐욕스러운 면이 있으시겠네요 👹");
-            championComments.put("Taliyah", "바위 직조사... 견고한 신념을 가지고 계시군요 🪨");
+            championComments.put("Taliyah", "바위 같이 단단함... 견고한 신념을 가지고 계시군요 🪨");
             championComments.put("Talon", "그림자 암살자... 조용하고 치명적이시겠어요 🗡️");
             championComments.put("Taric", "보석 기사... 아름다움을 추구하시는 분이시겠어요 💎✨");
             championComments.put("Teemo", "티모... 악마의 속삭임을 들으시는군요... 😈");
@@ -769,7 +759,6 @@ public class SearchController {
     public String handleRuntimeException(RuntimeException e, Model model) {
         System.err.println("RuntimeException 발생: " + e.getMessage());
         e.printStackTrace();
-
         model.addAttribute("error", e.getMessage());
         return "intro";
     }
@@ -777,16 +766,7 @@ public class SearchController {
     @ExceptionHandler(JsonProcessingException.class)
     public String handleJsonException(JsonProcessingException e, Model model) {
         System.err.println("JSON 파싱 오류: " + e.getMessage());
-
         model.addAttribute("error", "데이터 처리 중 오류가 발생했습니다. 사용자 이름과 태그를 확인해주세요.");
-        return "intro";
-    }
-
-    @ExceptionHandler(UnsupportedEncodingException.class)
-    public String handleEncodingException(UnsupportedEncodingException e, Model model) {
-        System.err.println("인코딩 오류: " + e.getMessage());
-
-        model.addAttribute("error", "잘못된 문자 형식입니다. 영문과 숫자만 사용해주세요.");
         return "intro";
     }
 
@@ -794,7 +774,6 @@ public class SearchController {
     public String handleGeneralException(Exception e, Model model) {
         System.err.println("예상치 못한 오류 발생: " + e.getMessage());
         e.printStackTrace();
-
         model.addAttribute("error", "서비스 이용 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
         return "intro";
     }

@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>개인화 분석 - Luminary</title>
+    <link rel="icon" type="image/png" href="/images/wepSiteLogo.png">
+
+    <!-- 🌌 Cards Galaxy 챔피언 추천 시스템 -->
+    <script src="/js/cardsGalaxyRecommendation.js"></script>
+
     <style>
         body, html {
             margin: 0;
@@ -24,7 +29,6 @@
             position: relative;
         }
 
-        /* 기존 intro.html과 동일한 그라데이션 */
         .top-gradient {
             position: fixed;
             top: 0;
@@ -57,7 +61,6 @@
             z-index: 5;
         }
 
-        /* 기존과 동일한 헤더 로고 */
         .header-logo {
             position: fixed;
             top: 20px;
@@ -77,26 +80,21 @@
             height: 25px;
         }
 
-        /* 메인 콘텐츠 */
         .main-content {
             padding-top: 120px;
             padding-bottom: 50px;
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             position: relative;
             z-index: 3;
         }
 
-        /* 사용자 정보 카드 - 중앙정렬 */
-        .user-info-card {
+        /* 🔥 통일된 카드 기본 스타일 */
+        .unified-card {
             background: rgba(0, 0, 0, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 30px;
-            margin: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center; /* 중앙정렬 추가 */
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             transition: all 0.3s ease;
@@ -104,10 +102,53 @@
             overflow: hidden;
         }
 
-        .user-info-card:hover {
+        .unified-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .unified-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
             border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .unified-card:hover::before {
+            opacity: 1;
+        }
+
+        /* 🎯 사용자 정보와 룰렛이 함께 있는 상단 섹션 */
+        .user-and-roulette-section {
+            display: flex;
+            gap: 20px;
+            margin: 20px;
+            align-items: stretch;
+        }
+
+        .user-info-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            flex: 1;
+            min-width: 0;
         }
 
         .user-info-card::before {
@@ -122,6 +163,12 @@
             transition: opacity 0.3s ease;
         }
 
+        .user-info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
         .user-info-card:hover::before {
             opacity: 1;
         }
@@ -131,12 +178,8 @@
             height: 80px;
             border-radius: 50%;
             border: 4px solid rgba(255, 255, 255, 0.2);
-            margin-right: 20px;
+            margin-bottom: 15px;
             flex-shrink: 0;
-        }
-
-        .user-info-text {
-            text-align: center; /* 텍스트 중앙정렬 */
         }
 
         .user-info-text h1 {
@@ -155,27 +198,495 @@
             margin-bottom: 10px;
         }
 
-        /* 멘트 카드들 */
-        .comment-section {
-            margin: 30px 20px;
+        /* 🎯 챔피언 룰렛 카드 */
+        .champion-roulette-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            flex: 0 0 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        .comment-card {
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 25px;
-            margin: 15px 0;
-            backdrop-filter: blur(10px);
+        .champion-roulette-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ffc107, #ff9800, #f44336);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .champion-roulette-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .champion-roulette-card:hover::before {
+            opacity: 1;
+        }
+
+        .roulette-title {
+            color: #ffc107;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .roulette-display {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .comment-card:hover {
+        .roulette-display.spinning {
+            animation: spin 2s linear, colorShift 2s ease-in-out;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(1080deg); }
+        }
+
+        @keyframes colorShift {
+            0% { background: linear-gradient(135deg, #ff6b6b 0%, #feca57 50%, #48dbfb 100%); }
+            50% { background: linear-gradient(135deg, #feca57 0%, #48dbfb 50%, #ff6b6b 100%); }
+            100% { background: linear-gradient(135deg, #48dbfb 0%, #ff6b6b 50%, #feca57 100%); }
+        }
+
+        .champion-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .roulette-question {
+            font-size: 3rem;
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .roulette-result {
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .champion-name {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .champion-role {
+            color: #ffc107;
+            font-size: 0.9rem;
+            background: rgba(255, 193, 7, 0.2);
+            padding: 4px 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .champion-tip {
+            color: #ccc;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .roulette-btn {
+            background: linear-gradient(45deg, #ffc107, #ff9800);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .roulette-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 193, 7, 0.4);
+            background: linear-gradient(45deg, #ffcd38, #ffa726);
+        }
+
+        .roulette-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* 🌌 Cards Galaxy 컨테이너 - 행성 궤도 효과 포함 */
+        .galaxy-container {
+            position: relative;
+            width: 100%;
+            min-height: 800px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 30px 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .galaxy-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .galaxy-container:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
             border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .galaxy-container:hover::before {
+            opacity: 1;
+        }
+
+        /* 🌟 별들 애니메이션 */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes twinkle {
+            from { opacity: 0.3; transform: scale(1); }
+            to { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* 🪐 플레이어 허브 (중앙) - 회전 애니메이션 */
+        .player-hub {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: conic-gradient(from 0deg, rgba(102, 126, 234, 0.8), rgba(255, 107, 157, 0.8), rgba(78, 205, 196, 0.8), rgba(102, 126, 234, 0.8));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            animation: hubRotate 60s linear infinite;
+        }
+
+        @keyframes hubRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .player-info {
+            width: 180px;
+            height: 180px;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(20px);
+            text-align: center;
+            animation: hubInfoCounter 60s linear infinite;
+        }
+
+        @keyframes hubInfoCounter {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+
+        /* 🎴 챔피언 카드 컨테이너 */
+        .champion-cards-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        /* 🌍 행성 궤도 애니메이션 - 챔피언 카드들 */
+        .champion-card {
+            position: absolute;
+            width: 160px;
+            height: 220px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            pointer-events: auto;
+            opacity: 0;
+            left: 50%;
+            top: 50%;
+            transform-origin: center center;
+        }
+
+        /* 궤도별 회전 애니메이션 */
+        .champion-card.orbit-1 {
+            animation: orbit1 45s linear infinite;
+        }
+
+        .champion-card.orbit-2 {
+            animation: orbit2 60s linear infinite;
+        }
+
+        .champion-card.orbit-3 {
+            animation: orbit3 75s linear infinite;
+        }
+
+        /* 첫 번째 궤도 (가장 안쪽) - 250px 반지름 */
+        @keyframes orbit1 {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg) translateX(250px) rotate(0deg);
+                opacity: 1;
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(360deg) translateX(250px) rotate(-360deg);
+                opacity: 1;
+            }
+        }
+
+        /* 두 번째 궤도 (중간) - 350px 반지름 */
+        @keyframes orbit2 {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg) translateX(350px) rotate(0deg);
+                opacity: 1;
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(360deg) translateX(350px) rotate(-360deg);
+                opacity: 1;
+            }
+        }
+
+        /* 세 번째 궤도 (가장 바깥쪽) - 450px 반지름 */
+        @keyframes orbit3 {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg) translateX(450px) rotate(0deg);
+                opacity: 1;
+            }
+            to {
+                transform: translate(-50%, -50%) rotate(360deg) translateX(450px) rotate(-360deg);
+                opacity: 1;
+            }
+        }
+
+        .champion-card.visible {
+            opacity: 1;
+        }
+
+        .champion-card:hover {
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+            border-color: rgba(102, 126, 234, 0.8);
+            z-index: 10;
+            animation-play-state: paused;
+        }
+
+        .champion-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            border: 3px solid rgba(255,255,255,0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .champion-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .champion-name {
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .champion-role {
+            color: #4ecdc4;
+            font-size: 0.8rem;
+            text-align: center;
+            background: rgba(78, 205, 196, 0.2);
+            padding: 4px 10px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: inline-block;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .confidence-score {
+            color: #ffc107;
+            font-size: 0.9rem;
+            text-align: center;
+            font-weight: bold;
+            background: rgba(255, 193, 7, 0.2);
+            padding: 4px 8px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .champion-tags {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .champion-tag {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .champion-tag.meta { background: rgba(255, 107, 157, 0.3); color: #ff6b9d; }
+        .champion-tag.personal { background: rgba(78, 205, 196, 0.3); color: #4ecdc4; }
+        .champion-tag.style { background: rgba(255, 193, 7, 0.3); color: #ffc107; }
+
+        /* 궤도 링 */
+        .orbit-ring {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .orbit-ring.ring-1 {
+            width: 500px;
+            height: 500px;
+            border-color: rgba(102, 126, 234, 0.3);
+            animation: ringRotate1 40s linear infinite;
+        }
+
+        .orbit-ring.ring-2 {
+            width: 700px;
+            height: 700px;
+            border-color: rgba(255, 107, 157, 0.2);
+            animation: ringRotate2 60s linear infinite reverse;
+        }
+
+        .orbit-ring.ring-3 {
+            width: 900px;
+            height: 900px;
+            border-color: rgba(78, 205, 196, 0.15);
+            animation: ringRotate3 80s linear infinite;
+        }
+
+        @keyframes ringRotate1 {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes ringRotate2 {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes ringRotate3 {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* 로딩 플레이스홀더 */
+        .loading-placeholder {
+            animation: fadeInOut 2s ease-in-out infinite;
+            text-align: center;
+            padding: 50px;
+            color: white;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* 기존 스타일들 - 통일된 카드 효과 적용 */
+        .comment-section {
+            margin: 30px 20px;
+        }
+
+        .comment-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 15px 0;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .comment-card::before {
@@ -188,6 +699,12 @@
             background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
             opacity: 0;
             transition: opacity 0.3s ease;
+        }
+
+        .comment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .comment-card:hover::before {
@@ -221,30 +738,24 @@
             font-style: italic;
         }
 
-        /* 통계 그리드 - 6개 박스로 확장 */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3열로 고정 */
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
             margin: 20px;
         }
 
         .stat-card {
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            border-radius: 20px;
             padding: 20px;
             text-align: center;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .stat-card::before {
@@ -257,6 +768,12 @@
             background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
             opacity: 0;
             transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
         .stat-card:hover::before {
@@ -277,7 +794,6 @@
             line-height: 1.2;
         }
 
-        /* 액션 버튼들 */
         .action-buttons {
             display: flex;
             justify-content: center;
@@ -314,10 +830,341 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
+        /* 🎯 콘텐츠 추천 섹션 스타일 */
+        .content-recommendation {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 20px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .content-recommendation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #7461ee, #ff6b9d, #4ecdc4);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .content-recommendation:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .content-recommendation:hover::before {
+            opacity: 1;
+        }
+
+        .content-recommendation-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .content-recommendation-title {
+            color: #7461ee;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content-recommendation-message {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        /* ✨ AI 영상 콘텐츠 그리드 (동적 로딩) */
+        .video-content-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .video-content-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .video-content-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(116, 97, 238, 0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(116, 97, 238, 0.2);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-play-icon {
+            position: absolute;
+            font-size: 3rem;
+            color: white;
+            opacity: 0.8;
+            z-index: 2;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            transition: all 0.3s ease;
+        }
+
+        .video-content-item:hover .video-play-icon {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .video-info {
+            padding: 15px;
+        }
+
+        .video-title {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .video-description {
+            color: #ccc;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 0.75rem;
+        }
+
+        .video-channel {
+            color: #7461ee;
+            font-weight: 500;
+        }
+
+        .video-relevance {
+            color: #ffc107;
+            background: rgba(255, 193, 7, 0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* 로딩 상태 */
+        .video-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            color: #ccc;
+            font-size: 1.1rem;
+        }
+
+        .video-loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid #7461ee;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 15px;
+        }
+
+        /* 에러 상태 */
+        .video-error {
+            text-align: center;
+            padding: 30px;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .retry-btn {
+            background: linear-gradient(45deg, #7461ee, #ff6b9d);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(116, 97, 238, 0.4);
+        }
+
+        /* 미니게임 섹션 */
+        .minigames-section {
+            margin-top: 30px;
+        }
+
+        .minigames-title {
+            color: #4ecdc4;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .minigame-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .minigame-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .minigame-item:hover::before {
+            opacity: 1;
+        }
+
+        .minigame-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            cursor: pointer;
+        }
+
+        .minigame-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .minigame-title-text {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .minigame-icon {
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+
+        .minigame-arrow {
+            color: #7461ee;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .minigame-arrow.expanded {
+            transform: rotate(180deg);
+        }
+
+        .minigame-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .minigame-content.expanded {
+            max-height: 800px;
+            padding: 25px;
+        }
+
+        .minigame-game-area {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .minigame-description {
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+
+        .minigame-start-btn {
+            background: linear-gradient(45deg, #7461ee, #ff6b9d);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            padding: 12px 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .minigame-start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(116, 97, 238, 0.4);
+        }
+
         /* 반응형 */
         @media (max-width: 768px) {
-            .main-content {
-                padding-top: 100px;
+            .user-and-roulette-section {
+                flex-direction: column;
+                margin: 10px;
+            }
+
+            .champion-roulette-card {
+                flex: none;
             }
 
             .user-info-card {
@@ -339,6 +1186,10 @@
                 margin: 10px;
             }
 
+            .video-content-grid {
+                grid-template-columns: 1fr;
+            }
+
             .action-buttons {
                 flex-direction: column;
                 align-items: center;
@@ -348,30 +1199,155 @@
                 margin: 10px;
                 padding: 20px;
             }
+
+            .content-recommendation {
+                margin: 20px 10px;
+                padding: 20px;
+            }
+
+            .galaxy-container {
+                margin: 20px 10px;
+                min-height: 600px;
+            }
+
+            /* 모바일에서 궤도 크기 조정 */
+            @keyframes orbit1 {
+                from {
+                    transform: translate(-50%, -50%) rotate(0deg) translateX(150px) rotate(0deg);
+                    opacity: 1;
+                }
+                to {
+                    transform: translate(-50%, -50%) rotate(360deg) translateX(150px) rotate(-360deg);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes orbit2 {
+                from {
+                    transform: translate(-50%, -50%) rotate(0deg) translateX(220px) rotate(0deg);
+                    opacity: 1;
+                }
+                to {
+                    transform: translate(-50%, -50%) rotate(360deg) translateX(220px) rotate(-360deg);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes orbit3 {
+                from {
+                    transform: translate(-50%, -50%) rotate(0deg) translateX(290px) rotate(0deg);
+                    opacity: 1;
+                }
+                to {
+                    transform: translate(-50%, -50%) rotate(360deg) translateX(290px) rotate(-360deg);
+                    opacity: 1;
+                }
+            }
+
+            .orbit-ring.ring-1 {
+                width: 300px;
+                height: 300px;
+            }
+
+            .orbit-ring.ring-2 {
+                width: 440px;
+                height: 440px;
+            }
+
+            .orbit-ring.ring-3 {
+                width: 580px;
+                height: 580px;
+            }
+
+            .champion-card {
+                width: 120px;
+                height: 180px;
+                padding: 10px;
+            }
+
+            .champion-avatar {
+                width: 50px;
+                height: 50px;
+            }
+
+            .champion-name {
+                font-size: 0.8rem;
+            }
+
+            .champion-role {
+                font-size: 0.7rem;
+                padding: 2px 6px;
+            }
+
+            .confidence-score {
+                font-size: 0.7rem;
+                padding: 2px 6px;
+            }
+
+            .player-hub {
+                width: 150px;
+                height: 150px;
+            }
+
+            .player-info {
+                width: 130px;
+                height: 130px;
+            }
         }
     </style>
 </head>
 <body>
 <div class="page-container">
-    <!-- 기존과 동일한 그라데이션 -->
     <div class="top-gradient"></div>
 
-    <!-- 기존과 동일한 로고 -->
     <div class="header-logo">
         <img src="/images/siteLogo.png" alt="Site Logo" class="logo-icon">
         <img src="/images/smallLogo.png" alt="Luminary" class="small-logo">
     </div>
 
     <div class="main-content">
-        <!-- 사용자 정보 카드 - 중앙정렬 -->
-        <div class="user-info-card">
-            <img th:src="'https://ddragon.leagueoflegends.com/cdn/' + ${version} + '/img/profileicon/'+${userdata.profileIconId}+'.png'"
-                 class="profile-icon" alt="프로필 아이콘">
+        <!-- 🎯 사용자 정보와 룰렛 섹션 -->
+        <div class="user-and-roulette-section">
+            <!-- 사용자 정보 카드 (왼쪽) -->
+            <div class="user-info-card">
+                <img th:src="'https://ddragon.leagueoflegends.com/cdn/' + ${version} + '/img/profileicon/'+${userdata.profileIconId}+'.png'"
+                     class="profile-icon" alt="프로필 아이콘">
 
-            <div class="user-info-text">
-                <h1 th:text="${gameName + '#' + tagLine}">Hide on bush#KR1</h1>
-                <div class="user-subtitle">당신의 롤 인생을 분석해드릴게요! ✨</div>
-                <div class="user-subtitle" th:if="${userdata != null}" th:text="'레벨 ' + ${userdata.summonerLevel}">레벨 835</div>
+                <div class="user-info-text">
+                    <h1 th:text="${gameName + '#' + tagLine}">Hide on bush#KR1</h1>
+                    <div class="user-subtitle">당신의 롤 인생을 분석해드릴게요! ✨</div>
+                    <div class="user-subtitle" th:if="${userdata != null}" th:text="'레벨 ' + ${userdata.summonerLevel}">레벨 837</div>
+                </div>
+            </div>
+
+            <!-- 🎯 챔피언 룰렛 카드 (오른쪽) -->
+            <div class="champion-roulette-card">
+                <div class="roulette-title">오늘의 챔피언은 뭘까요?!</div>
+
+                <div class="roulette-display" id="roulette-display">
+                    <div class="roulette-question" id="roulette-question">?</div>
+                    <img class="champion-image" id="champion-image" style="display: none;" alt="챔피언">
+                </div>
+
+                <div class="roulette-result" id="roulette-result">
+                    <div class="champion-name" id="champion-name" style="display: none;"></div>
+                    <div class="champion-role" id="champion-role" style="display: none;"></div>
+                    <div class="champion-tip" id="champion-tip" style="display: none;"></div>
+                </div>
+
+                <button class="roulette-btn" id="roulette-btn" onclick="spinRoulette()">
+                    룰렛 돌리기! 🎲
+                </button>
+            </div>
+        </div>
+
+        <!-- 🌌 Cards Galaxy - AI 기반 챔피언 추천 시스템 -->
+        <div class="galaxy-container" id="galaxyContainer">
+            <!-- JavaScript로 동적 생성됨 -->
+            <div class="loading-placeholder">
+                <div style="font-size: 2rem; margin-bottom: 20px;">🌌</div>
+                <div style="font-size: 1.2rem; margin-bottom: 10px;">Cards Galaxy 로딩 중...</div>
+                <div style="color: rgba(255,255,255,0.7);">AI 기반 챔피언 추천 시스템을 준비하고 있습니다.</div>
             </div>
         </div>
 
@@ -392,7 +1368,64 @@
             </div>
         </div>
 
-        <!-- 통계 그리드 - 6개 박스 -->
+        <!-- 🎯 AI 기반 개인화 콘텐츠 추천 섹션 -->
+        <div class="content-recommendation" id="contentRecommendation">
+            <div class="content-recommendation-header">
+                <div class="content-recommendation-title">
+                    <span class="comment-emoji">🤖</span>
+                    AI가 추천하는 맞춤 콘텐츠
+                </div>
+                <div class="content-recommendation-message" id="personalizedMessage">
+                    Gemini AI가 당신의 플레이 스타일을 분석해서 맞춤 영상을 찾고 있어요! 🔍
+                </div>
+            </div>
+
+            <div class="video-content-grid" id="videoContentGrid">
+                <!-- AI 영상 추천이 여기에 동적으로 로드됩니다 -->
+                <div class="video-loading">
+                    <div class="video-loading-spinner"></div>
+                    AI가 맞춤 영상을 분석하고 있습니다...
+                </div>
+            </div>
+
+            <div class="minigames-section">
+                <div class="minigames-title">🎮 대기 시간용 미니게임</div>
+
+                <div class="minigame-item">
+                    <div class="minigame-header" onclick="toggleMinigame('reaction-test')">
+                        <div class="minigame-title-text">
+                            <span class="minigame-icon">⚡</span>
+                            반응속도 테스트
+                        </div>
+                        <div class="minigame-arrow" id="reaction-test-arrow">▼</div>
+                    </div>
+                    <div class="minigame-content" id="reaction-test-content">
+                        <div class="minigame-game-area" id="reaction-test-area">
+                            <div class="minigame-description">프로게이머 수준의 반응속도를 테스트해보세요!</div>
+                            <button class="minigame-start-btn" onclick="startReactionTest('reaction-test-area')">테스트 시작</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="minigame-item">
+                    <div class="minigame-header" onclick="toggleMinigame('snake-game')">
+                        <div class="minigame-title-text">
+                            <span class="minigame-icon">🐍</span>
+                            뱀 게임
+                        </div>
+                        <div class="minigame-arrow" id="snake-game-arrow">▼</div>
+                    </div>
+                    <div class="minigame-content" id="snake-game-content">
+                        <div class="minigame-game-area" id="snake-game-area">
+                            <div class="minigame-description">뱀 게임으로 집중력과 순발력을 함께 기르는 게임!</div>
+                            <button class="minigame-start-btn" onclick="startSnakeGame('snake-game-area')">게임 시작</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 통계 그리드 -->
         <div class="stats-grid">
             <div class="stat-card">
                 <span class="stat-number" th:text="${estimatedHours}">5707</span>
@@ -488,10 +1521,1107 @@
     </div>
 </div>
 
+<!-- 🌌 Cards Galaxy 초기화 스크립트 -->
+<script th:inline="javascript">
+    // Thymeleaf 변수들을 JavaScript 전역 변수로 설정
+    window.championRecommendations = /*[[${championRecommendations}]]*/ null;
+    window.playerData = {
+        name: /*[[${gameName}]]*/ 'Player',
+        tagLine: /*[[${tagLine}]]*/ 'TAG',
+        winRate: /*[[${winRate}]]*/ 67,
+        averageKDA: /*[[${averageKDA}]]*/ 2.4,
+        tier: /*[[${tier}]]*/ 'GOLD',
+        level: /*[[${userdata?.summonerLevel}]]*/ 100
+    };
+    window.currentVersion = /*[[${version}]]*/ '14.23.1';
+
+    console.log('🔧 전역 변수 설정 완료:', {
+        championRecommendations: window.championRecommendations,
+        playerData: window.playerData,
+        currentVersion: window.currentVersion
+    });
+</script>
+
 <script>
+    // 🎥 AI 기반 영상 추천 시스템
+    class AIVideoRecommendationSystem {
+        constructor(playerName) {
+            this.playerName = playerName;
+            this.apiEndpoint = '/api/content/personalized';
+            this.retryCount = 0;
+            this.maxRetries = 3;
+        }
+
+        /**
+         * 🚀 AI 영상 추천 로드
+         */
+        async loadVideoRecommendations() {
+            try {
+                console.log('🤖 AI 영상 추천 로드 시작:', this.playerName);
+
+                const response = await fetch(`${this.apiEndpoint}?playerName=${encodeURIComponent(this.playerName)}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('✅ AI 영상 데이터 로드 성공:', data);
+
+                this.renderVideoRecommendations(data);
+                this.updatePersonalizedMessage(data.personalizedMessage);
+
+            } catch (error) {
+                console.error('❌ AI 영상 로드 실패:', error);
+                this.handleVideoLoadError(error);
+            }
+        }
+
+        /**
+         * 🎨 영상 추천 렌더링
+         */
+        renderVideoRecommendations(data) {
+            const container = document.getElementById('videoContentGrid');
+            if (!container) return;
+
+            if (!data.videoContents || data.videoContents.length === 0) {
+                this.renderNoVideosState();
+                return;
+            }
+
+            // 영상 카드들 생성
+            const videoCards = data.videoContents.map(video => this.createVideoCard(video)).join('');
+            container.innerHTML = videoCards;
+
+            // 순차적 애니메이션 효과
+            this.animateVideoCards();
+        }
+
+        /**
+         * 🎬 영상 카드 생성
+         */
+        createVideoCard(video) {
+            const thumbnailUrl = video.thumbnailUrl || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMyMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMTgwIiBmaWxsPSIjNjY3ZWVhIiByeD0iMTAiLz4KPHN2ZyB4PSIxMjAiIHk9IjYwIiB3aWR0aD0iODAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA4MCA2MCIgZmlsbD0ibm9uZSI+Cjxwb2x5Z29uIHBvaW50cz0iMjAsMTAgNjAsMzAgMjAsNTAiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjgiLz4KPC9zdmc+Cjx0ZXh0IHg9IjE2MCIgeT0iMTQwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkFJIOy2lOyynCDrr7jsp4A8L3RleHQ+Cjwvc3ZnPg==';
+            const channelName = video.channelTitle || 'AI 추천';
+            const relevanceScore = video.relevanceScore ? Math.round(video.relevanceScore * 100) : 85;
+            const shortTitle = video.title.length > 50 ? video.title.substring(0, 50) + '...' : video.title;
+            const shortDescription = video.description.length > 80 ? video.description.substring(0, 80) + '...' : video.description;
+
+            return `
+                <div class="video-content-item" onclick="openVideo('${video.url}')">
+                    <div class="video-thumbnail">
+                        <img src="${thumbnailUrl}" alt="${video.title}"
+                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDMyMCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMTgwIiBmaWxsPSIjNjY3ZWVhIiByeD0iMTAiLz4KPHN2ZyB4PSIxMjAiIHk9IjYwIiB3aWR0aD0iODAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA4MCA2MCIgZmlsbD0ibm9uZSI+Cjxwb2x5Z29uIHBvaW50cz0iMjAsMTAgNjAsMzAgMjAsNTAiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjgiLz4KPC9zdmc+Cjx0ZXh0IHg9IjE2MCIgeT0iMTQwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkFJIOy2lOyynCDrr7jsp4A8L3RleHQ+Cjwvc3ZnPg=='">
+                        <div class="video-play-icon">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">${shortTitle}</div>
+                        <div class="video-description">${shortDescription}</div>
+                        <div class="video-meta">
+                            <div class="video-channel">${channelName}</div>
+                            <div class="video-relevance">${relevanceScore}% 추천</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        /**
+         * 📺 영상 열기
+         */
+        openVideo(url) {
+            if (url && url.startsWith('http')) {
+                window.open(url, '_blank');
+            } else {
+                console.error('유효하지 않은 URL:', url);
+                alert('영상을 열 수 없습니다. 잠시 후 다시 시도해주세요.');
+            }
+        }
+
+        /**
+         * 💫 영상 카드 애니메이션
+         */
+        animateVideoCards() {
+            const cards = document.querySelectorAll('.video-content-item');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200 + 300);
+            });
+        }
+
+        /**
+         * 💬 개인화 메시지 업데이트
+         */
+        updatePersonalizedMessage(message) {
+            const messageElement = document.getElementById('personalizedMessage');
+            if (messageElement && message) {
+                messageElement.textContent = message;
+            }
+        }
+
+        /**
+         * 🚫 영상 없음 상태 렌더링
+         */
+        renderNoVideosState() {
+            const container = document.getElementById('videoContentGrid');
+            container.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #ccc;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">🤖</div>
+                    <div style="font-size: 1.2rem; margin-bottom: 10px;">AI가 아직 분석 중이에요!</div>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">플레이 데이터를 더 수집한 후 맞춤 영상을 추천해드릴게요.</div>
+                </div>
+            `;
+        }
+
+        /**
+         * ❌ 에러 상태 처리
+         */
+        handleVideoLoadError(error) {
+            this.retryCount++;
+
+            if (this.retryCount <= this.maxRetries) {
+                console.log(`🔄 재시도 ${this.retryCount}/${this.maxRetries}...`);
+                setTimeout(() => this.loadVideoRecommendations(), 2000 * this.retryCount);
+                return;
+            }
+
+            const container = document.getElementById('videoContentGrid');
+            container.innerHTML = `
+                <div class="video-error" style="grid-column: 1 / -1;">
+                    <div style="font-size: 2rem; margin-bottom: 15px;">⚠️</div>
+                    <div style="font-size: 1.1rem; margin-bottom: 10px;">AI 영상 추천을 불러올 수 없어요</div>
+                    <div style="font-size: 0.9rem; margin-bottom: 15px;">네트워크를 확인하거나 잠시 후 다시 시도해주세요.</div>
+                    <button class="retry-btn" onclick="retryVideoLoad()">다시 시도</button>
+                </div>
+            `;
+        }
+    }
+
+    // 🌌 메인 초기화 함수
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('🌌 개인화 분석 페이지 초기화 시작');
+
+        // 전역 변수 설정 및 검증
+        window.playerData = window.playerData || {
+            name: /*[[${gameName}]]*/ 'Player',
+            level: /*[[${userdata?.summonerLevel}]]*/ 100,
+            tier: /*[[${tier}]]*/ 'GOLD',
+            winRate: /*[[${winRate}]]*/ 67,
+            averageKDA: /*[[${averageKDA}]]*/ 2.4
+        };
+
+        window.currentVersion = window.currentVersion || /*[[${version}]]*/ '14.23.1';
+
+        console.log('🔧 데이터 확인:', {
+            playerData: window.playerData,
+            currentVersion: window.currentVersion,
+            championRecommendations: window.championRecommendations ? '있음' : '없음'
+        });
+
+        // AI 영상 추천 시스템 초기화
+        window.aiVideoSystem = new AIVideoRecommendationSystem(window.playerData.name);
+
+        // 지연 후 초기화 (DOM 완전 로드 대기)
+        setTimeout(() => {
+            try {
+                // Cards Galaxy 시스템 초기화
+                initializeCardsGalaxy();
+
+                // AI 영상 추천 로드
+                window.aiVideoSystem.loadVideoRecommendations();
+
+            } catch (error) {
+                console.error('❌ 초기화 실패:', error);
+                createFallbackSystems();
+            }
+        }, 1500); // 1.5초 지연
+    });
+
+    /**
+     * 🌌 Cards Galaxy 초기화
+     */
+    function initializeCardsGalaxy() {
+        try {
+            // 1차: 원본 CardsGalaxySystem 시도
+            if (typeof CardsGalaxySystem !== 'undefined' && window.championRecommendations) {
+                console.log('✅ 원본 Cards Galaxy 시스템 사용');
+                window.galaxySystem = new CardsGalaxySystem(
+                    window.championRecommendations,
+                    window.playerData,
+                    window.currentVersion
+                );
+                return;
+            }
+
+            // 2차: CardsGalaxySystem이 있지만 데이터가 없는 경우 API 시도
+            if (typeof CardsGalaxySystem !== 'undefined') {
+                console.log('🔄 API를 통한 데이터 로드 시도');
+                fetchGalaxyDataAndInit();
+                return;
+            }
+
+            // 3차: 완전 폴백 시스템 사용
+            console.log('🛡️ 폴백 시스템 사용');
+            createFallbackGalaxySystem();
+
+        } catch (error) {
+            console.error('❌ Cards Galaxy 초기화 실패:', error);
+            createFallbackGalaxySystem();
+        }
+    }
+
+    /**
+     * 🛡️ 폴백 시스템들 생성
+     */
+    function createFallbackSystems() {
+        createFallbackGalaxySystem();
+        createFallbackVideoRecommendations();
+    }
+
+    /**
+     * 📺 폴백 영상 추천 생성
+     */
+    function createFallbackVideoRecommendations() {
+        const container = document.getElementById('videoContentGrid');
+        if (!container) return;
+
+        const fallbackVideos = [
+            {
+                title: "롤 기초 가이드 - 초보자를 위한 완벽 정리",
+                description: "리그오브레전드를 처음 시작하는 분들을 위한 핵심 가이드입니다.",
+                url: "https://youtube.com/watch?v=guide1",
+                channelTitle: "LoL Guide",
+                relevanceScore: 0.85
+            },
+            {
+                title: "랭크 승급을 위한 필수 팁 모음",
+                description: "상위 티어로 올라가기 위한 실전 노하우를 공개합니다.",
+                url: "https://youtube.com/watch?v=guide2",
+                channelTitle: "Pro Gaming",
+                relevanceScore: 0.90
+            }
+        ];
+
+        const videoCards = fallbackVideos.map(video => window.aiVideoSystem.createVideoCard(video)).join('');
+        container.innerHTML = videoCards;
+
+        // 애니메이션 적용
+        window.aiVideoSystem.animateVideoCards();
+
+        // 메시지 업데이트
+        const messageElement = document.getElementById('personalizedMessage');
+        if (messageElement) {
+            messageElement.textContent = '기본 추천 영상을 준비했어요! 더 정확한 추천을 위해서는 더 많은 게임 데이터가 필요해요 📊';
+        }
+    }
+
+    // 🌌 폴백 Cards Galaxy 시스템 (독립 실행 가능)
+    function createFallbackGalaxySystem() {
+        console.log('🛡️ 폴백 Cards Galaxy 시스템 실행');
+
+        const container = document.getElementById('galaxyContainer');
+        if (!container) {
+            console.error('galaxyContainer를 찾을 수 없습니다');
+            return;
+        }
+
+        // 기본 구조 생성
+        container.innerHTML = `
+            <div class="stars"></div>
+            <div class="orbit-ring ring-1"></div>
+            <div class="orbit-ring ring-2"></div>
+            <div class="orbit-ring ring-3"></div>
+            <div class="champion-cards-container" id="championCards"></div>
+            <div class="player-hub">
+                <div class="player-info">
+                    <div style="color: white; font-size: 1.1rem; font-weight: bold; margin-bottom: 5px;">${window.playerData.name}</div>
+                    <div style="color: #4ecdc4; font-size: 0.9rem; margin-bottom: 3px;">레벨 ${window.playerData.level}</div>
+                    <div style="color: #ffc107; font-size: 0.8rem; margin-bottom: 5px;">${window.playerData.tier}</div>
+                    <div style="color: rgba(255,255,255,0.7); font-size: 0.7rem;">${window.playerData.winRate}% 승률</div>
+                </div>
+            </div>
+        `;
+
+        // 별 애니메이션 추가
+        createStars();
+
+        // 챔피언 카드 생성
+        createChampionCards();
+
+        console.log('✅ 폴백 Cards Galaxy 시스템 완료');
+    }
+
+    function createStars() {
+        const starsContainer = document.querySelector('#galaxyContainer .stars');
+        if (!starsContainer) return;
+
+        for (let i = 0; i < 80; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            star.style.animationDuration = (Math.random() * 2 + 1) + 's';
+            starsContainer.appendChild(star);
+        }
+    }
+
+    function createChampionCards() {
+        const container = document.getElementById('championCards');
+        if (!container) return;
+
+        // API에서 가져온 데이터 우선 사용, 없으면 Mock 데이터
+        let championData = [];
+
+        // 백엔드 추천 데이터 확인
+        if (window.championRecommendations && window.championRecommendations.recommendations) {
+            championData = window.championRecommendations.recommendations.slice(0, 12).map(rec => ({
+                name: rec.championName,
+                role: rec.primaryRole,
+                confidence: Math.round(rec.confidenceScore * 100),
+                tags: generateChampionTags(rec)
+            }));
+        } else {
+            // Mock 데이터 사용 (12개로 확장)
+            championData = [
+                { name: 'Jinx', role: 'ADC', confidence: 92, tags: ['meta', 'personal'] },
+                { name: 'Yasuo', role: 'MID', confidence: 85, tags: ['style'] },
+                { name: 'Thresh', role: 'SUPPORT', confidence: 88, tags: ['meta'] },
+                { name: 'Lee Sin', role: 'JUNGLE', confidence: 90, tags: ['personal'] },
+                { name: 'Garen', role: 'TOP', confidence: 83, tags: ['style'] },
+                { name: 'Ahri', role: 'MID', confidence: 87, tags: ['meta'] },
+                { name: 'Caitlyn', role: 'ADC', confidence: 84, tags: ['personal'] },
+                { name: 'Leona', role: 'SUPPORT', confidence: 89, tags: ['meta', 'style'] },
+                { name: 'Graves', role: 'JUNGLE', confidence: 86, tags: ['meta'] },
+                { name: 'Fiora', role: 'TOP', confidence: 82, tags: ['style'] },
+                { name: 'Lux', role: 'MID', confidence: 81, tags: ['personal'] },
+                { name: 'Braum', role: 'SUPPORT', confidence: 80, tags: ['style'] }
+            ];
+        }
+
+        console.log('📊 챔피언 데이터:', championData);
+
+        championData.forEach((champion, index) => {
+            const card = document.createElement('div');
+            card.className = 'champion-card';
+
+            // 궤도 배치 (4개씩 3개 궤도에 배치)
+            const orbit = Math.floor(index / 4) + 1; // 1, 2, 3
+            card.classList.add(`orbit-${orbit}`);
+
+            // 궤도 내 시작 각도 설정 (각 카드마다 90도씩 차이)
+            const angleInOrbit = (index % 4) * 90;
+            card.style.setProperty('--start-angle', `${angleInOrbit}deg`);
+
+            // 카드 내용 생성
+            const tags = champion.tags.map(tag =>
+                `<span class="champion-tag ${tag}">${getTagLabel(tag)}</span>`
+            ).join('');
+
+            card.innerHTML = `
+                <div class="champion-avatar">
+                    <img src="https://ddragon.leagueoflegends.com/cdn/${window.currentVersion}/img/champion/${champion.name}.png"
+                         alt="${champion.name}"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzAiIGhlaWdodD0iNzAiIHZpZXdCb3g9IjAgMCA3MCA3MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcwIiBoZWlnaHQ9IjcwIiBmaWxsPSIjNjY3ZWVhIiByeD0iMzUiLz4KPHRleHQgeD0iMzUiIHk9IjQwIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPj88L3RleHQ+Cjwvc3ZnPg=='">
+                </div>
+                <div class="champion-name">${champion.name}</div>
+                <div class="champion-role">${champion.role}</div>
+                <div class="confidence-score">${champion.confidence}%</div>
+                <div class="champion-tags">${tags}</div>
+            `;
+
+            // 클릭 이벤트 추가
+            card.addEventListener('click', () => showChampionDetails(champion));
+
+            container.appendChild(card);
+
+            // 순차적 등장 애니메이션
+            setTimeout(() => {
+                card.classList.add('visible');
+            }, index * 200 + 1500); // 1.5초 후부터 시작
+        });
+    }
+
+    function generateChampionTags(rec) {
+        const tags = [];
+        if (rec.personalStats) tags.push('personal');
+        if (rec.metaStrength >= 8.0) tags.push('meta');
+        if (rec.styleMatch >= 0.8) tags.push('style');
+        return tags;
+    }
+
+    function getTagLabel(tag) {
+        const labels = {
+            'meta': '메타',
+            'personal': '개인',
+            'style': '스타일'
+        };
+        return labels[tag] || tag;
+    }
+
+    function showChampionDetails(champion) {
+        alert(`🌟 ${champion.name}\n라인: ${champion.role}\n추천도: ${champion.confidence}%\n\nOP.GG에서 더 자세한 정보를 확인하세요!`);
+
+        // OP.GG 링크 열기 (선택사항)
+        if (confirm('OP.GG에서 이 챔피언의 상세 정보를 보시겠습니까?')) {
+            window.open(`https://www.op.gg/champions/${champion.name.toLowerCase()}/build`, '_blank');
+        }
+    }
+
+    // API를 통한 데이터 로드 및 초기화
+    async function fetchGalaxyDataAndInit() {
+        try {
+            const playerName = window.playerData.name || 'Player';
+            const apiUrl = `/api/v2/recommendations/galaxy?playerName=${encodeURIComponent(playerName)}&count=12`;
+
+            console.log('📡 API 요청:', apiUrl);
+
+            const response = await fetch(apiUrl);
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('📡 API 데이터 로드 성공:', data);
+
+            if (!data.champions || data.champions.length === 0) {
+                throw new Error('API 응답에 챔피언 데이터가 없습니다');
+            }
+
+            // API 데이터를 recommendationResult 형태로 변환
+            const apiRecommendations = {
+                recommendations: data.champions.map(champion => ({
+                    championName: champion.name,
+                    primaryRole: champion.role,
+                    confidenceScore: champion.confidence / 100,
+                    metaStrength: champion.tier === 'S' ? 9 : champion.tier === 'A' ? 7 : 5,
+                    styleMatch: champion.styleMatch / 100,
+                    personalStats: champion.type === 'personal' ? {} : null
+                })),
+                personalizedMessage: data.message || 'AI 추천 챔피언들을 만나보세요!',
+                playerProfile: {
+                    playStyle: { primaryStyle: data.playerStyle || 'BALANCED' }
+                }
+            };
+
+            // Cards Galaxy 시스템 초기화
+            window.galaxySystem = new CardsGalaxySystem(
+                apiRecommendations,
+                window.playerData,
+                window.currentVersion
+            );
+
+            console.log('✅ API 기반 Cards Galaxy 초기화 완료');
+
+        } catch (error) {
+            console.error('❌ API 로드 실패, 폴백 시스템 사용:', error);
+            createFallbackGalaxySystem();
+        }
+    }
+
+    // 전역 함수들
+    window.openVideo = function(url) {
+        if (window.aiVideoSystem) {
+            window.aiVideoSystem.openVideo(url);
+        }
+    };
+
+    window.retryVideoLoad = function() {
+        if (window.aiVideoSystem) {
+            window.aiVideoSystem.retryCount = 0;
+            window.aiVideoSystem.loadVideoRecommendations();
+        }
+    };
+
+    // 전역 디버깅 함수들
+    window.galaxyDebug = {
+        reload: function() {
+            console.log('🔄 페이지 새로고침');
+            location.reload();
+        },
+
+        testVideoAPI: function() {
+            console.log('🧪 영상 API 테스트 시작');
+            fetch('/api/content/personalized?playerName=test')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('✅ 영상 API 테스트 결과:', data);
+                    alert('영상 API 테스트 성공! 콘솔을 확인하세요.');
+                })
+                .catch(error => {
+                    console.error('❌ 영상 API 테스트 실패:', error);
+                    alert('영상 API 테스트 실패: ' + error.message);
+                });
+        },
+
+        getSystemInfo: function() {
+            const info = {
+                galaxySystem: window.galaxySystem ? '있음' : '없음',
+                aiVideoSystem: window.aiVideoSystem ? '있음' : '없음',
+                CardsGalaxySystem: typeof CardsGalaxySystem,
+                playerData: window.playerData,
+                championRecommendations: window.championRecommendations ? '있음' : '없음',
+                currentVersion: window.currentVersion
+            };
+            console.log('🔍 시스템 정보:', info);
+            return info;
+        },
+
+        forceFallback: function() {
+            console.log('🛡️ 강제 폴백 실행');
+            createFallbackSystems();
+        },
+
+        recreate: function() {
+            console.log('🔄 시스템 재생성');
+            const container = document.getElementById('galaxyContainer');
+            if (container) {
+                container.innerHTML = `
+                    <div class="loading-placeholder">
+                        <div style="font-size: 2rem; margin-bottom: 20px;">🌌</div>
+                        <div style="font-size: 1.2rem; margin-bottom: 10px;">시스템 재로딩 중...</div>
+                        <div style="color: rgba(255,255,255,0.7);">잠시만 기다려주세요.</div>
+                    </div>
+                `;
+
+                setTimeout(() => {
+                    createFallbackSystems();
+                }, 1000);
+            }
+        }
+    };
+
+    // 페이지 언로드 시 정리
+    window.addEventListener('beforeunload', function() {
+        if (window.galaxySystem && typeof window.galaxySystem.destroy === 'function') {
+            window.galaxySystem.destroy();
+        }
+    });
+
+    console.log('🎮 AI 기반 개인화 분석 스크립트 로드 완료');
+    console.log('💡 디버깅: window.galaxyDebug.getSystemInfo() 로 시스템 상태 확인');
+    console.log('🔧 강제 폴백: window.galaxyDebug.forceFallback() 실행');
+    console.log('🔄 재생성: window.galaxyDebug.recreate() 실행');
+    console.log('📺 영상 API 테스트: window.galaxyDebug.testVideoAPI() 실행');
+
+    // ===== 🎯 챔피언 룰렛 시스템 =====
+    const championData = {
+        // ========== ADC 챔피언들 ==========
+        'Jinx': { role: 'ADC', tip: '미니언을 많이 잡고 성장하세요!' },
+        'Caitlyn': { role: 'ADC', tip: '원거리에서 견제하며 안전하게!' },
+        'Ezreal': { role: 'ADC', tip: 'Q스킬로 꾸준히 견제해보세요!' },
+        'Vayne': { role: 'ADC', tip: '후반에 강한 챔피언이에요!' },
+        'Ashe': { role: 'ADC', tip: '궁극기로 이니시를 걸어보세요!' },
+        'Jhin': { role: 'ADC', tip: '4번째 총알의 위력을 활용하세요!' },
+        'Lucian': { role: 'ADC', tip: '기동성을 살려 킬을 따보세요!' },
+        'Kai\'Sa': { role: 'ADC', tip: '진화한 스킬들의 시너지를 노려보세요!' },
+        'Miss Fortune': { role: 'ADC', tip: '궁극기 탄막으로 팀파이트를 제압하세요!' },
+        'Tristana': { role: 'ADC', tip: '점프로 위험에서 탈출하세요!' },
+
+        // ========== SUPPORT 챔피언들 ==========
+        'Thresh': { role: 'SUPPORT', tip: '갈고리로 적을 끌어와보세요!' },
+        'Leona': { role: 'SUPPORT', tip: '태양의 힘으로 아군을 보호하세요!' },
+        'Soraka': { role: 'SUPPORT', tip: '힐로 아군을 살려주세요!' },
+        'Lulu': { role: 'SUPPORT', tip: '폴리모프로 적을 무력화시키세요!' },
+        'Nautilus': { role: 'SUPPORT', tip: '앵커로 적을 잡아끄세요!' },
+        'Blitzcrank': { role: 'SUPPORT', tip: '로켓 손으로 적을 당겨오세요!' },
+        'Yuumi': { role: 'SUPPORT', tip: '아군에게 붙어서 버프를 주세요!' },
+        'Pyke': { role: 'SUPPORT', tip: '은신으로 기습해보세요!' },
+        'Braum': { role: 'SUPPORT', tip: '방패로 아군을 지켜주세요!' },
+        'Alistar': { role: 'SUPPORT', tip: '황소의 힘으로 적을 들이받으세요!' },
+
+        // ========== JUNGLE 챔피언들 ==========
+        'Lee Sin': { role: 'JUNGLE', tip: '킥으로 적을 날려버리세요!' },
+        'Graves': { role: 'JUNGLE', tip: '총으로 정글을 정리하세요!' },
+        'Kha\'Zix': { role: 'JUNGLE', tip: '고립된 적을 노려보세요!' },
+        'Master Yi': { role: 'JUNGLE', tip: '알파 스트라이크로 적을 베어보세요!' },
+        'Hecarim': { role: 'JUNGLE', tip: '말의 속도로 적진을 뚫고 들어가세요!' },
+        'Elise': { role: 'JUNGLE', tip: '거미 형태를 활용해보세요!' },
+        'Evelynn': { role: 'JUNGLE', tip: '은신으로 기습 암살을 노려보세요!' },
+        'Rengar': { role: 'JUNGLE', tip: '수풀에서 점프 공격하세요!' },
+        'Warwick': { role: 'JUNGLE', tip: '늑대의 본능으로 사냥하세요!' },
+        'Ammu': { role: 'JUNGLE', tip: '미라의 슬픔으로 적들을 묶어보세요!' },
+
+        // ========== TOP 챔피언들 ==========
+        'Garen': { role: 'TOP', tip: '회전베기로 적을 쓸어버리세요!' },
+        'Darius': { role: 'TOP', tip: '도끼로 적을 처단하세요!' },
+        'Fiora': { role: 'TOP', tip: '급소를 노려 우아하게 싸우세요!' },
+        'Jax': { role: 'TOP', tip: '반격으로 적의 공격을 막아보세요!' },
+        'Irelia': { role: 'TOP', tip: '칼날 춤으로 적을 베어보세요!' },
+        'Malphite': { role: 'TOP', tip: '바위같은 탱킹으로 아군을 보호하세요!' },
+        'Riven': { role: 'TOP', tip: '콤보로 적을 압도하세요!' },
+        'Aatrox': { role: 'TOP', tip: '검으로 적을 베며 체력을 회복하세요!' },
+        'Camille': { role: 'TOP', tip: '정밀한 다리로 적을 절단하세요!' },
+        'Nasus': { role: 'TOP', tip: 'Q를 계속 스택 쌓아 최강이 되세요!' },
+
+        // ========== MID 챔피언들 ==========
+        'Yasuo': { role: 'MID', tip: '바람의 장벽으로 원거리 공격을 막으세요!' },
+        'Zed': { role: 'MID', tip: '그림자를 이용해 기습하세요!' },
+        'Ahri': { role: 'MID', tip: '매혹으로 적을 유혹하세요!' },
+        'LeBlanc': { role: 'MID', tip: '환상으로 적을 속이세요!' },
+        'Syndra': { role: 'MID', tip: '구체를 조작해 적을 제압하세요!' },
+        'Orianna': { role: 'MID', tip: '공으로 아군을 보호하고 적을 공격하세요!' },
+        'Lux': { role: 'MID', tip: '빛의 마법으로 적을 관통하세요!' },
+        'Akali': { role: 'MID', tip: '연막과 기동성으로 암살하세요!' },
+        'Annie': { role: 'MID', tip: '곰 티버와 함께 불꽃으로 적을 태우세요!' },
+        'Malzahar': { role: 'MID', tip: '공허충으로 라인을 푸쉬하세요!' }
+    };
+
+    const championNames = Object.keys(championData);
+    let isSpinning = false;
+
+    // 현재 버전 정보 (Thymeleaf에서 가져오기, 없으면 기본값)
+    const currentVersion = /*[[${version}]]*/ '14.23.1';
+
+    function spinRoulette() {
+        if (isSpinning) return;
+
+        // DOM 요소들 확인
+        const btn = document.getElementById('roulette-btn');
+        const display = document.getElementById('roulette-display');
+        const question = document.getElementById('roulette-question');
+        const championImage = document.getElementById('champion-image');
+        const championName = document.getElementById('champion-name');
+        const championRole = document.getElementById('champion-role');
+        const championTip = document.getElementById('champion-tip');
+
+        // 필수 요소들이 없으면 함수 종료
+        if (!btn || !display || !question || !championImage) {
+            console.error('룰렛 DOM 요소를 찾을 수 없습니다:', {
+                btn: !!btn,
+                display: !!display,
+                question: !!question,
+                championImage: !!championImage
+            });
+            return;
+        }
+
+        isSpinning = true;
+
+        // 버튼 비활성화
+        btn.disabled = true;
+        btn.textContent = '돌리는 중...';
+
+        // 룰렛 애니메이션 시작
+        display.classList.add('spinning');
+        question.style.display = 'block';
+        championImage.style.display = 'none';
+
+        // 결과 숨기기
+        championName.style.display = 'none';
+        championRole.style.display = 'none';
+        championTip.style.display = 'none';
+
+        // 2초 후 결과 표시
+        setTimeout(() => {
+            // 랜덤 챔피언 선택
+            const randomChampion = championNames[Math.floor(Math.random() * championNames.length)];
+            const championInfo = championData[randomChampion];
+
+            // 애니메이션 중지
+            display.classList.remove('spinning');
+
+            // 결과 표시
+            question.style.display = 'none';
+            championImage.style.display = 'block';
+            championImage.src = `https://ddragon.leagueoflegends.com/cdn/${currentVersion}/img/champion/${randomChampion}.png`;
+            championImage.alt = randomChampion;
+
+            championName.textContent = randomChampion;
+            championName.style.display = 'block';
+
+            championRole.textContent = championInfo.role;
+            championRole.style.display = 'block';
+
+            championTip.textContent = championInfo.tip;
+            championTip.style.display = 'block';
+
+            // 버튼 활성화
+            btn.disabled = false;
+            btn.textContent = '다시 돌리기! 🎲';
+            isSpinning = false;
+
+            // 효과음 재생 (선택사항)
+            playRouletteSound();
+
+        }, 2000);
+    }
+
+    function playRouletteSound() {
+        try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            // 룰렛 완료 사운드
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+            oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.2);
+
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        } catch (e) {
+            console.log('Audio playback not supported');
+        }
+    }
+
+    // ===== 🎮 미니게임 관련 변수들 =====
+    let currentReactionGame = null;
+    let currentSnakeGame = null;
+
+    // 미니게임 토글 함수
+    function toggleMinigame(gameId) {
+        const content = document.getElementById(gameId + '-content');
+        const arrow = document.getElementById(gameId + '-arrow');
+
+        if (content.classList.contains('expanded')) {
+            content.classList.remove('expanded');
+            arrow.classList.remove('expanded');
+            arrow.textContent = '▼';
+
+            // 게임 정리
+            if (gameId.includes('reaction-test') && currentReactionGame) {
+                currentReactionGame.destroy();
+                currentReactionGame = null;
+            }
+            if (gameId.includes('snake-game') && currentSnakeGame) {
+                currentSnakeGame.destroy();
+                currentSnakeGame = null;
+            }
+        } else {
+            // 다른 모든 미니게임 닫기
+            document.querySelectorAll('.minigame-content').forEach(item => {
+                item.classList.remove('expanded');
+            });
+            document.querySelectorAll('.minigame-arrow').forEach(arrow => {
+                arrow.classList.remove('expanded');
+                arrow.textContent = '▼';
+            });
+
+            // 기존 게임들 정리
+            if (currentReactionGame) {
+                currentReactionGame.destroy();
+                currentReactionGame = null;
+            }
+            if (currentSnakeGame) {
+                currentSnakeGame.destroy();
+                currentSnakeGame = null;
+            }
+
+            // 선택된 미니게임 열기
+            content.classList.add('expanded');
+            arrow.classList.add('expanded');
+            arrow.textContent = '▲';
+        }
+    }
+
+    // 반응속도 테스트 시작
+    function startReactionTest(areaId) {
+        const gameArea = document.getElementById(areaId);
+        if (!gameArea) return;
+
+        // 기존 게임이 있다면 정리
+        if (currentReactionGame) {
+            currentReactionGame.destroy();
+        }
+
+        // ReactionTestGame 클래스 직접 구현 (간단 버전)
+        currentReactionGame = createReactionTestGame(gameArea);
+    }
+
+    // 뱀 게임 시작
+    function startSnakeGame(areaId) {
+        const gameArea = document.getElementById(areaId);
+        if (!gameArea) return;
+
+        // 기존 게임이 있다면 정리
+        if (currentSnakeGame) {
+            currentSnakeGame.destroy();
+        }
+
+        // SnakeGame 클래스 직접 구현 (간단 버전)
+        currentSnakeGame = createSnakeGame(gameArea);
+    }
+
+    // 반응속도 테스트 게임 생성
+    function createReactionTestGame(gameArea) {
+        let isRunning = false;
+        let startTime = 0;
+        let waitTimeout = null;
+
+        gameArea.innerHTML = `
+            <div style="background: rgba(0,0,0,0.8); padding: 30px; border-radius: 15px; text-align: center;">
+                <div id="reaction-display" style="width: 400px; height: 300px; background: #667eea; margin: 0 auto 25px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.8rem; cursor: pointer; transition: all 0.3s ease; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                    준비하세요... 빨간색이 초록색으로 바뀌면 클릭!
+                </div>
+                <div id="reaction-result" style="color: white; min-height: 100px; margin-bottom: 25px; font-size: 1.2rem; line-height: 1.5;"></div>
+                <button id="reaction-start-btn" onclick="startReactionGame()" style="background: linear-gradient(45deg, #7461ee, #ff6b9d); color: white; border: none; padding: 15px 30px; border-radius: 25px; cursor: pointer; font-size: 1.1rem; font-weight: 600;">
+                    🚀 시작
+                </button>
+            </div>
+        `;
+
+        window.startReactionGame = function() {
+            if (isRunning) return;
+
+            isRunning = true;
+            const display = document.getElementById('reaction-display');
+            const result = document.getElementById('reaction-result');
+            const btn = document.getElementById('reaction-start-btn');
+
+            btn.disabled = true;
+            btn.textContent = '대기중...';
+            result.textContent = '';
+
+            // 준비 단계 (빨간색)
+            display.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)';
+            display.textContent = '잠시 기다리세요...';
+
+            // 랜덤 시간 후 시작 (2-6초)
+            const waitTime = Math.random() * 4000 + 2000;
+
+            waitTimeout = setTimeout(() => {
+                if (!isRunning) return;
+
+                display.style.background = 'linear-gradient(135deg, #00d2d3 0%, #54a0ff 100%)';
+                display.textContent = '지금 클릭하세요!';
+                startTime = performance.now();
+            }, waitTime);
+
+            // 클릭 이벤트
+            display.onclick = function() {
+                if (!isRunning) return;
+
+                const currentTime = performance.now();
+
+                if (startTime === 0) {
+                    // 너무 빨리 클릭
+                    endReactionGame('early', 0);
+                } else {
+                    // 정상 반응
+                    const reactionTime = currentTime - startTime;
+                    endReactionGame('success', reactionTime);
+                }
+            };
+        };
+
+        function endReactionGame(type, reactionTime) {
+            isRunning = false;
+            clearTimeout(waitTimeout);
+            startTime = 0;
+
+            const display = document.getElementById('reaction-display');
+            const result = document.getElementById('reaction-result');
+            const btn = document.getElementById('reaction-start-btn');
+
+            btn.disabled = false;
+            btn.textContent = '다시 시작';
+
+            if (type === 'early') {
+                display.style.background = '#ff6b6b';
+                display.textContent = '너무 빨라요! 😅';
+                result.innerHTML = '아직 신호가 나오지 않았어요!<br>초록색으로 바뀔 때까지 기다려보세요.';
+                return;
+            }
+
+            // 성공한 경우
+            const analysis = analyzeReactionTime(reactionTime);
+            display.style.background = 'linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)';
+            display.textContent = `${Math.round(reactionTime)}ms`;
+            result.innerHTML = `
+                <div style="background: ${analysis.color}; color: ${analysis.textColor}; padding: 8px 16px; border-radius: 20px; font-weight: bold; margin-bottom: 10px; display: inline-block;">
+                    ${analysis.grade} 등급
+                </div><br>
+                ${analysis.message}<br>
+                <small style="color: #ccc;">${analysis.description}</small>
+            `;
+        }
+
+        function analyzeReactionTime(time) {
+            if (time < 150) {
+                return {
+                    grade: 'S+',
+                    message: '초인간적 반응속도! 🤖',
+                    description: '프로게이머도 부러워할 반응속도입니다!',
+                    color: 'linear-gradient(45deg, #ffd700, #ffed4e)',
+                    textColor: '#333'
+                };
+            } else if (time < 200) {
+                return {
+                    grade: 'S',
+                    message: '프로게이머 수준! 🏆',
+                    description: '전문 게이머 수준의 놀라운 반응속도네요!',
+                    color: 'linear-gradient(45deg, #c0c0c0, #e8e8e8)',
+                    textColor: '#333'
+                };
+            } else if (time < 250) {
+                return {
+                    grade: 'A',
+                    message: '매우 빠름! ⚡',
+                    description: '상위 5%에 해당하는 빠른 반응속도입니다!',
+                    color: 'linear-gradient(45deg, #cd7f32, #daa520)',
+                    textColor: 'white'
+                };
+            } else if (time < 300) {
+                return {
+                    grade: 'B',
+                    message: '좋은 반응속도! 👍',
+                    description: '평균보다 빠른 좋은 반응속도예요!',
+                    color: 'linear-gradient(45deg, #4ecdc4, #44a08d)',
+                    textColor: 'white'
+                };
+            } else {
+                return {
+                    grade: 'C',
+                    message: '연습이 필요해요! 💪',
+                    description: '조금 더 집중해서 연습해보세요!',
+                    color: 'linear-gradient(45deg, #95a5a6, #7f8c8d)',
+                    textColor: 'white'
+                };
+            }
+        }
+
+        return {
+            destroy: function() {
+                isRunning = false;
+                clearTimeout(waitTimeout);
+                if (window.startReactionGame) {
+                    delete window.startReactionGame;
+                }
+            }
+        };
+    }
+
+    // 뱀 게임 생성 (간단 버전)
+    function createSnakeGame(gameArea) {
+        let canvas, ctx;
+        let snake = [{x: 10, y: 10}];
+        let direction = {x: 1, y: 0};
+        let food = {x: 15, y: 15};
+        let score = 0;
+        let gameLoop = null;
+        let gameRunning = false;
+
+        gameArea.innerHTML = `
+            <div style="background: rgba(0,0,0,0.8); padding: 25px; border-radius: 15px; text-align: center;">
+                <div style="color: white; margin-bottom: 20px; font-size: 1.1rem;">
+                    점수: <span id="snake-score" style="color: #4ecdc4; font-weight: bold;">0</span>
+                </div>
+                <canvas id="snake-canvas" width="400" height="400" style="background: #1a1a2e; border: 3px solid #7461ee; border-radius: 12px; display: block; margin: 0 auto 20px;"></canvas>
+                <div style="color: #ccc; margin-bottom: 20px;">방향키로 조작하세요!</div>
+                <button id="snake-start-btn" onclick="startSnakeGameLoop()" style="background: linear-gradient(45deg, #7461ee, #ff6b9d); color: white; border: none; padding: 15px 30px; border-radius: 25px; cursor: pointer; font-size: 1rem; margin-right: 10px;">🚀 시작</button>
+                <button id="snake-reset-btn" onclick="resetSnakeGame()" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 15px 30px; border-radius: 25px; cursor: pointer; font-size: 1rem; display: none;">🔄 다시하기</button>
+            </div>
+        `;
+
+        canvas = document.getElementById('snake-canvas');
+        ctx = canvas.getContext('2d');
+
+        const keyHandler = (e) => {
+            if (!gameRunning) return;
+            switch(e.key) {
+                case 'ArrowUp': if (direction.y === 0) direction = {x: 0, y: -1}; break;
+                case 'ArrowDown': if (direction.y === 0) direction = {x: 0, y: 1}; break;
+                case 'ArrowLeft': if (direction.x === 0) direction = {x: -1, y: 0}; break;
+                case 'ArrowRight': if (direction.x === 0) direction = {x: 1, y: 0}; break;
+            }
+            e.preventDefault();
+        };
+        document.addEventListener('keydown', keyHandler);
+
+        window.startSnakeGameLoop = function() {
+            if (gameRunning) return;
+            gameRunning = true;
+            document.getElementById('snake-start-btn').style.display = 'none';
+            gameLoop = setInterval(updateSnakeGame, 150);
+        };
+
+        window.resetSnakeGame = function() {
+            gameRunning = false;
+            clearInterval(gameLoop);
+            snake = [{x: 10, y: 10}];
+            direction = {x: 1, y: 0};
+            food = {x: 15, y: 15};
+            score = 0;
+            document.getElementById('snake-score').textContent = '0';
+            document.getElementById('snake-start-btn').style.display = 'inline-block';
+            document.getElementById('snake-reset-btn').style.display = 'none';
+            drawSnakeGame();
+        };
+
+        function updateSnakeGame() {
+            const head = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
+            if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20 ||
+                snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                gameRunning = false;
+                clearInterval(gameLoop);
+                alert(`게임 오버! 점수: ${score}`);
+                document.getElementById('snake-reset-btn').style.display = 'inline-block';
+                return;
+            }
+            snake.unshift(head);
+            if (head.x === food.x && head.y === food.y) {
+                score += 10;
+                document.getElementById('snake-score').textContent = score;
+                generateFood();
+            } else {
+                snake.pop();
+            }
+            drawSnakeGame();
+        }
+
+        function drawSnakeGame() {
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillRect(0, 0, 400, 400);
+
+            // 뱀 그리기
+            snake.forEach((segment, index) => {
+                ctx.fillStyle = index === 0 ? '#4ecdc4' : '#45b7d1';
+                ctx.fillRect(segment.x * 20, segment.y * 20, 18, 18);
+            });
+
+            // 음식 그리기
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fillRect(food.x * 20, food.y * 20, 18, 18);
+        }
+
+        function generateFood() {
+            do {
+                food = {x: Math.floor(Math.random() * 20), y: Math.floor(Math.random() * 20)};
+            } while (snake.some(segment => segment.x === food.x && segment.y === food.y));
+        }
+
+        drawSnakeGame();
+
+        return {
+            destroy: function() {
+                gameRunning = false;
+                clearInterval(gameLoop);
+                document.removeEventListener('keydown', keyHandler);
+                if (window.startSnakeGameLoop) delete window.startSnakeGameLoop;
+                if (window.resetSnakeGame) delete window.resetSnakeGame;
+            }
+        };
+    }
+
     // 페이지 로드 시 애니메이션 효과
     document.addEventListener('DOMContentLoaded', function() {
-        const cards = document.querySelectorAll('.comment-card, .user-info-card, .stat-card');
+        // 카드 애니메이션
+        const cards = document.querySelectorAll('.comment-card, .user-info-card, .stat-card, .champion-roulette-card, .content-recommendation');
         cards.forEach((card, index) => {
             card.style.opacity = '0';
             card.style.transform = 'translateY(30px)';
@@ -503,6 +2633,22 @@
             }, index * 150);
         });
     });
+
+    // 페이지 언로드 시 게임 정리
+    window.addEventListener('beforeunload', function() {
+        if (currentReactionGame) {
+            currentReactionGame.destroy();
+        }
+        if (currentSnakeGame) {
+            currentSnakeGame.destroy();
+        }
+    });
+
+    // 전역 함수들을 window에 바인딩
+    window.spinRoulette = spinRoulette;
+    window.toggleMinigame = toggleMinigame;
+    window.startReactionTest = startReactionTest;
+    window.startSnakeGame = startSnakeGame;
 </script>
 </body>
 </html>

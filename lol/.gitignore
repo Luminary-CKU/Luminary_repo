@@ -128,23 +128,23 @@ buildNumber.properties
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### 환경 설정 파일 - API 키 보호 ###
-# API 키가 포함된 설정 파일들 (절대 업로드 금지!)
+# 🔒 모든 설정 파일 완전 숨김 (GitHub에 아무것도 안보이게!)
 src/main/resources/application.properties
-src/main/resources/application.yml
-src/main/resources/application-*.properties
-src/main/resources/application-*.yml
+src/main/resources/application*.properties
+src/main/resources/application*.yml
 application.properties
-application.yml
-application-*.properties
-application-*.yml
+application*.properties
+application*.yml
 
-# 환경 설정 파일
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# 🔒 환경 변수 파일들
+.env*
+
+# 🔒 기타 보안 파일들
+*.key
+*.pem
+*.p12
+config/
+secrets/
 
 ### 데이터베이스 ###
 *.db
@@ -178,3 +178,15 @@ yarn.lock
 
 ### 기타 개발 도구 ###
 .springjavaformatconfig
+
+### 캐시 파일들 ###
+.cache/
+*.cache
+
+### IDE 설정 파일들 ###
+*.orig
+coverage/
+test-output/
+
+# 🧪 개발 중 임시 파일들 (선택사항)
+# TestController.java  <-- 개발 완료 후 주석 해제하여 제외 가능
