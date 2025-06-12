@@ -3,7 +3,6 @@ package com.lol.lol.dto;
 import java.util.List;
 
 public class MatchIdDto {
-
     private List<String> matchIds;
 
     // Getters and Setters

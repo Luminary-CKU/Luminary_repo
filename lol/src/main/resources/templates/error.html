@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오류 - Luminary</title>
+  <link rel="icon" type="image/png" href="/images/wepSiteLogo.png">
+  <style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+        background-color: #0a0a0a;
+    }
+
+    .error-container {
+        width: 100%;
+        height: 100vh;
+        background-image: url('/images/background.jpg');
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    /* 상단 그라데이션 효과 */
+    .top-gradient {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 1) 0%,
+            rgba(0, 0, 0, 0.95) 5%,
+            rgba(0, 0, 0, 0.9) 10%,
+            rgba(0, 0, 0, 0.85) 15%,
+            rgba(0, 0, 0, 0.8) 20%,
+            rgba(0, 0, 0, 0.75) 25%,
+            rgba(0, 0, 0, 0.7) 30%,
+            rgba(0, 0, 0, 0.65) 35%,
+            rgba(0, 0, 0, 0.6) 40%,
+            rgba(0, 0, 0, 0.55) 45%,
+            rgba(0, 0, 0, 0.5) 50%,
+            rgba(0, 0, 0, 0.45) 55%,
+            rgba(0, 0, 0, 0.4) 60%,
+            rgba(0, 0, 0, 0.35) 65%,
+            rgba(0, 0, 0, 0.3) 70%,
+            rgba(0, 0, 0, 0.25) 75%,
+            rgba(0, 0, 0, 0.2) 80%,
+            rgba(0, 0, 0, 0.15) 85%,
+            rgba(0, 0, 0, 0.1) 90%,
+            rgba(0, 0, 0, 0.05) 95%,
+            rgba(0, 0, 0, 0) 100%
+        );
+        z-index: 5;
+    }
+
+    .header-logo {
+        position: absolute;
+        top: 20px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+    }
+
+    .logo-icon {
+        height: 30px;
+        margin-right: 10px;
+    }
+
+    .small-logo {
+        height: 25px;
+    }
+
+    .error-content {
+        background: rgba(0, 0, 0, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        max-width: 500px;
+        margin: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .error-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+    }
+
+    .error-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        color: #ff6b6b;
+    }
+
+    .error-title {
+        color: #fff;
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .error-message {
+        color: #ccc;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 30px;
+    }
+
+    .error-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .error-btn {
+        background: rgba(74, 144, 226, 0.8);
+        border: none;
+        border-radius: 25px;
+        color: white;
+        padding: 12px 25px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        backdrop-filter: blur(10px);
+    }
+
+    .error-btn:hover {
+        background: rgba(74, 144, 226, 1);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+    }
+
+    /* 반응형 */
+    @media (max-width: 768px) {
+        .error-content {
+            margin: 10px;
+            padding: 30px 20px;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+        }
+
+        .error-message {
+            font-size: 1rem;
+        }
+
+        .error-btn {
+            width: 100%;
+            max-width: 200px;
+        }
+    }
+
+    /* 애니메이션 */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .error-content {
+        animation: fadeInUp 0.6s ease;
+    }
+  </style>
+</head>
+<body>
+<div class="error-container">
+  <!-- 상단 그라데이션 -->
+  <div class="top-gradient"></div>
+
+  <!-- 헤더 로고 -->
+  <div class="header-logo">
+    <img src="/images/siteLogo.png" alt="Site Logo" class="logo-icon">
+    <img src="/images/smallLogo.png" alt="Luminary" class="small-logo">
+  </div>
+
+  <!-- 오류 내용 -->
+  <div class="error-content">
+    <div class="error-icon">⚠️</div>
+
+    <h1 class="error-title">앗, 문제가 발생했어요!</h1>
+
+    <div class="error-message" th:text="${error}">
+      요청을 처리하는 중 오류가 발생했습니다.
+    </div>
+
+    <div class="error-actions">
+      <a href="/" class="error-btn">🏠 홈으로 돌아가기</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 페이지 로드 시 애니메이션
+  document.addEventListener('DOMContentLoaded', function() {
+      const errorContent = document.querySelector('.error-content');
+      errorContent.style.opacity = '0';
+      errorContent.style.transform = 'translateY(30px)';
+
+      setTimeout(() => {
+          errorContent.style.transition = 'all 0.6s ease';
+          errorContent.style.opacity = '1';
+          errorContent.style.transform = 'translateY(0)';
+      }, 100);
+  });
+</script>
+</body>
+</html>
