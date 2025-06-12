@@ -1,26 +1,29 @@
-# API Keys and Sensitive Data (추가할 부분)
-application.properties
-application-*.properties
-*.env
-.env
+# 컴파일된 클래스 파일
+*.class
 
-# OS files (추가할 부분)
-.DS_Store
-Thumbs.db
-
-# Logs (추가할 부분)
+# Log 파일
 *.log
-logs/
 
-# 기존 내용은 그대로 두세요
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
+# BlueJ files
+*.ctxt
 
-### STS ###
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# 패키지 파일
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs
+hs_err_pid*
+replay_pid*
+
+### Spring Boot ###
 .apt_generated
 .classpath
 .factorypath
@@ -33,13 +36,35 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+
+### Eclipse ###
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+.project
+.externalToolBuilders/
+*.launch
+.pydevproject
+.cproject
+.autotools
+.factorypath
+.buildpath
+.target
 
 ### NetBeans ###
 /nbproject/private/
@@ -50,3 +75,118 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Mac OS ###
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+### Windows ###
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+### Linux ###
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+### Gradle ###
+.gradle/
+**/build/
+!src/**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# 🔒 모든 설정 파일 완전 숨김 (GitHub에 아무것도 안보이게!)
+src/main/resources/application.properties
+src/main/resources/application*.properties
+src/main/resources/application*.yml
+application.properties
+application*.properties
+application*.yml
+
+# 🔒 환경 변수 파일들
+.env*
+
+# 🔒 기타 보안 파일들
+*.key
+*.pem
+*.p12
+config/
+secrets/
+
+### 데이터베이스 ###
+*.db
+*.sqlite
+*.sqlite3
+*.h2.db
+
+### 로그 및 임시 파일 ###
+logs/
+*.log.*
+spring.log
+application.log
+
+### 테스트 관련 ###
+*.orig
+
+### 백업 및 임시 파일 ###
+*.backup
+*~
+.#*
+#*#
+
+### 패키지 관리자 ###
+# Node.js (프론트엔드가 있다면)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+### 기타 개발 도구 ###
+.springjavaformatconfig
+
+### 캐시 파일들 ###
+.cache/
+*.cache
+
+### IDE 설정 파일들 ###
+*.orig
+coverage/
+test-output/
+
+# 🧪 개발 중 임시 파일들 (선택사항)
+# TestController.java  <-- 개발 완료 후 주석 해제하여 제외 가능
