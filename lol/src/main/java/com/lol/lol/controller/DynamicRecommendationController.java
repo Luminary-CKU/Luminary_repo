@@ -3,6 +3,7 @@ package com.lol.lol.controller;
 import com.lol.lol.dto.*;
 import com.lol.lol.service.DynamicRecommendationEngine;
 import com.lol.lol.service.SummonerService;
+import com.lol.lol.dto.MatchDto;
 import com.lol.lol.service.ChampionRecommendationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -426,3 +427,4 @@ class RecommendationSystemHealth {
     private int totalChampionsAnalyzed;
     private String aiEngineStatus;       // ACTIVE, MAINTENANCE, ERROR
 }
+

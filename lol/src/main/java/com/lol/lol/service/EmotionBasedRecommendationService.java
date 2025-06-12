@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import com.lol.lol.dto.MatchAnalysis;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
