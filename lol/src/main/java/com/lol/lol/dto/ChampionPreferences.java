@@ -10,7 +10,7 @@ import java.util.Set;
 public class ChampionPreferences {
     private String mostPlayedChampion;
     private String bestPerformanceChampion;
-    private Map<String, Integer> championPlayCounts;   // 챔피언별 플레이 횟수
-    private Map<String, Double> championWinRates;      // 챔피언별 승률
-    private Set<String> preferredRoles;                // 선호 라인들
+    private Map<String, Integer> championPlayCounts;
+    private Map<String, Double> championWinRates;
+    private Set<String> preferredRoles;
 }

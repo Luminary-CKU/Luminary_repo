@@ -1,90 +1,76 @@
 package com.lol.lol.dto;
 
-
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class SummonerDto {
-
-    private String gameName;
-    private String tagLine;
-    private String id;
     private String accountId;
+    private int profileIconId;
+    private long revisionDate;
+    private String name;
+    private String id;
     private String puuid;
-    private Integer profileIconId;
-    private Long revisionDate;
-    private Long summonerLevel;
+    private Long summonerLevel; // long -> Long으로 변경 (null 허용)
 
-    //    @JsonProperty("profileIconId")
-    private String profileImg;
+    // 기본 생성자
+    public SummonerDto() {}
 
-    public void setGameName(String gameName) {
-        this.gameName = gameName;
-    }
-
-    public void setTagLine(String tagLine) {
-        this.tagLine = tagLine;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    // Getters and Setters
+    public String getAccountId() {
+        return accountId;
     }
 
     public void setAccountId(String accountId) {
         this.accountId = accountId;
     }
 
-    public void setProfileIconId(Integer profileIconId) {
-        this.profileIconId = profileIconId;
-    }
-
-    public void setPuuid(String puuid) {
-        this.puuid = puuid;
-    }
-
-    public void setRevisionDate(Long revisionDate) {
-        this.revisionDate = revisionDate;
-    }
-
-    public void setSummonerLevel(Long summonerLevel) {
-        this.summonerLevel = summonerLevel;
-    }
-
-    public Integer getProfileIconId() {
+    public int getProfileIconId() {
         return profileIconId;
     }
 
-    public Long getRevisionDate() {
+    public void setProfileIconId(int profileIconId) {
+        this.profileIconId = profileIconId;
+    }
+
+    public long getRevisionDate() {
         return revisionDate;
     }
 
-    public Long getSummonerLevel() {
-        return summonerLevel;
+    public void setRevisionDate(long revisionDate) {
+        this.revisionDate = revisionDate;
     }
 
-    public String getAccountId() {
-        return accountId;
+    public String getName() {
+        return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    // ContentRecommendationService 호환용 추가
     public String getGameName() {
-        return gameName;
+        return name; // name 필드를 gameName으로 사용
     }
 
     public String getId() {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getPuuid() {
         return puuid;
     }
 
-    public String getTagLine() {
-        return tagLine;
+    public void setPuuid(String puuid) {
+        this.puuid = puuid;
     }
 
-//    public void setProfileImg(String profileIconId){
-//        this.profileImg = "https://ddragon.leagueoflegends.com/cdn/14.16.1/data/ko_KR/profileicon.json"+profileIconId;
-//    }
+    public Long getSummonerLevel() {
+        return summonerLevel;
+    }
+
+    public void setSummonerLevel(Long summonerLevel) {
+        this.summonerLevel = summonerLevel;
+    }
 }
